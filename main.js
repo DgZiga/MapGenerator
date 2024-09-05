@@ -2,15 +2,65 @@ var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 
+
+//transform input_probs from list of tileids to bigintegers
+for(ref_tile_id in input_probs){
+    for(dir in input_probs[ref_tile_id]){
+        var res = 0n
+        for(tile_id of input_probs[ref_tile_id][dir]){
+            res |= 1n << BigInt(tile_id)
+        }
+        input_probs[ref_tile_id][dir] = res
+    }
+}
+
+
 var output = new Array();       //2d array of output tiles. -1 indicates superposition
-var output_probs = new Array(); //output_probs is a 3d array: first two indexes are position (x/y), each position contains a list of possibilities
+var output_probs = new Array(); //output_probs is a 2d array of bigints: first two indexes are position (x/y), each position contains a bigint which is to be read as a bitmap.
 var prob_calced_ctr = new Array();
 
-//just an array of all the probabilities to be cloned
-var probs_tmpl = new Array();
-for(var i=0; i<Object.keys(input_probs).length; i++){
-    probs_tmpl[i]=i;
+const BIT_LOOKUP_TBL = [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4] //for each index contains how many bits are set for that index value (e.g BIT_LOOKUP_TBL[3] = 2 because 3 is 0011)
+function count_bits(input){
+    var res = 0;
+    while(input > 0){
+        res += BIT_LOOKUP_TBL[input & 15n]
+        input >>= 4n
+    }
+    return res
 }
+
+//takes in a biginter bitmap and converts it to int[]
+function bitmap_to_tile_ids(input){
+    //can probably be faster
+    var out = new Array();
+    var i=0;
+    while (input != 0n){
+        if ((input & 1n) === 1n){
+            out.push(i)
+        }
+        i++;
+        input >>= 1n;
+    }
+    return out
+}
+
+function get_nth_set_bit(input, n){
+    var i=0;
+    while (input != 0n){
+        if ((input & 1n) === 1n){
+            if(n == 0){
+                return BigInt(i);
+            }
+            n--;
+        }
+        i++;
+        input >>= 1n;
+    }
+    throw new Error('Out of bounds');
+}
+
+//all possibilities accounted
+var probs_tmpl = (1n << BigInt(Object.keys(IVAN_PROBS).length))-1n
 
 function init(){
     //init arrays
@@ -19,7 +69,7 @@ function init(){
         output[i] = new Array();
         prob_calced_ctr[i] = new Array();
         for(var j=0; j<OUTPUT_H; j++){
-            output_probs[i][j] = probs_tmpl.slice(); //clone array
+            output_probs[i][j] = probs_tmpl
             output[i][j] = -1;
             prob_calced_ctr[i][j] = false;
         }
@@ -30,11 +80,12 @@ function init(){
 function find_lowest_entropy_cell(){
     var lowestI = -1;
     var lowestJ = -1;
-    var lowestCnt = probs_tmpl.length + 1*1;
+    var lowestCnt = count_bits(probs_tmpl) + 1*1;
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
-            if(output[i][j] == -1 && output_probs[i][j].length<lowestCnt){
-                lowestCnt = output_probs[i][j].length;
+            var bitsNo=count_bits(output_probs[i][j]);
+            if(output[i][j] == -1 && bitsNo<lowestCnt){
+                lowestCnt = bitsNo;
                 var lowestI = i;
                 var lowestJ = j;
             }
@@ -60,34 +111,38 @@ function recalc_prob(x, y){
     var r = new Array();
     var u = new Array();
     var d = new Array();
-    if(x>0)          {l=output_probs[x-1][y  ]}
-    if(x<OUTPUT_W-1) {r=output_probs[x+1][y  ]}
-    if(y>0)          {u=output_probs[x  ][y-1]}
-    if(y<OUTPUT_H-1) {d=output_probs[x  ][y+1]}
+    if(x>0)          {l=bitmap_to_tile_ids(output_probs[x-1][y  ])}
+    if(x<OUTPUT_W-1) {r=bitmap_to_tile_ids(output_probs[x+1][y  ])}
+    if(y>0)          {u=bitmap_to_tile_ids(output_probs[x  ][y-1])}
+    if(y<OUTPUT_H-1) {d=bitmap_to_tile_ids(output_probs[x  ][y+1])}
 
-    var l_allowed_tiles = new Array();
+    var l_allowed_tiles = 0n;
     for(tile of l){
-        l_allowed_tiles = l_allowed_tiles.concat(input_probs[""+tile].right)
+        l_allowed_tiles = l_allowed_tiles | input_probs[""+tile].right
     }
-    var r_allowed_tiles = new Array();
+    var r_allowed_tiles = 0n;
     for(tile of r){
-        r_allowed_tiles = r_allowed_tiles.concat(input_probs[""+tile].left)
+        r_allowed_tiles = r_allowed_tiles | input_probs[""+tile].left
     }
-    var u_allowed_tiles = new Array();
+    var u_allowed_tiles = 0n;
     for(tile of u){
-        u_allowed_tiles = u_allowed_tiles.concat(input_probs[""+tile].down)
+        u_allowed_tiles = u_allowed_tiles | input_probs[""+tile].down
     }
-    var d_allowed_tiles = new Array();
+    var d_allowed_tiles = 0n;
     for(tile of d){
-        d_allowed_tiles = d_allowed_tiles.concat(input_probs[""+tile].up)
+        d_allowed_tiles = d_allowed_tiles | input_probs[""+tile].up
     }
-    if(l.length == 0){l_allowed_tiles = probs_tmpl.slice()}
-    if(r.length == 0){r_allowed_tiles = probs_tmpl.slice()}
-    if(u.length == 0){u_allowed_tiles = probs_tmpl.slice()}
-    if(d.length == 0){d_allowed_tiles = probs_tmpl.slice()}
+    if(l.length == 0){l_allowed_tiles = probs_tmpl}
+    if(r.length == 0){r_allowed_tiles = probs_tmpl}
+    if(u.length == 0){u_allowed_tiles = probs_tmpl}
+    if(d.length == 0){d_allowed_tiles = probs_tmpl}
 
-    output_probs[x][y] = output_probs[x][y].filter(e => d_allowed_tiles.includes(e) && u_allowed_tiles.includes(e) && l_allowed_tiles.includes(e) && r_allowed_tiles.includes(e));
-    if(output_probs[x][y].length != probs_tmpl.length){
+    output_probs[x][y] = output_probs[x][y] & l_allowed_tiles;
+    output_probs[x][y] = output_probs[x][y] & r_allowed_tiles;
+    output_probs[x][y] = output_probs[x][y] & u_allowed_tiles;
+    output_probs[x][y] = output_probs[x][y] & d_allowed_tiles;
+
+    if(count_bits(output_probs[x][y]) != count_bits(probs_tmpl)){
         recalc_prob(x-1, y  )
         recalc_prob(x+1, y  )
         recalc_prob(x  , y-1)
@@ -98,9 +153,12 @@ function recalc_prob(x, y){
 
 function observe(x, y){
     var probs = output_probs[x][y]
-    var i = Math.floor(Math.random() * probs.length);
-    output[x][y] = output_probs[x][y][i]
-    output_probs[x][y] = [output[x][y]];
+    if(probs === 0n){
+        throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities');
+    }
+    var i = Math.floor(Math.random() * count_bits(probs));
+    output[x][y] = get_nth_set_bit(output_probs[x][y], i)
+    output_probs[x][y] = 1n << output[x][y];
 
     //propagate changes to nearby nodes
     recalc_prob(x, y)
@@ -119,6 +177,7 @@ function start(){
     var arr = find_lowest_entropy_cell();
     var x = arr[0];
     var y = arr[1];
+    var k=0;
     do {
         try{
             observe(x,y);
@@ -134,6 +193,7 @@ function start(){
             x = arr[0];
             y = arr[1];
         }
+        k++
     } while(x != -1 && y!= -1)
     console.log("done")
     var html = ""
