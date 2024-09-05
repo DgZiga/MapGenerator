@@ -2,6 +2,22 @@ var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 
+$("#container")[0].style.width=OUTPUT_W*16+"px"
+$("#wfcResultContainer")[0].style.width=OUTPUT_W*16+"px"
+
+function show_ruler(){
+    var html=""
+    for(var i=0; i<OUTPUT_W; i++){
+        for(var j=0; j<OUTPUT_H; j++){
+            if(i==0){
+                html+='<div style="text-align:center; position: absolute; top:'+i*16+'px; left: '+(j*1+1)*16+'px; width: 16px; height: 16px;">'+j+'</div>'
+            }
+        }
+        html+='<div style="text-align:center; position: absolute; top:'+(i*1+1)*16+'px; left: 0; width: 16px; height: 16px;">'+i+'</div>'
+    }
+    $("#container")[0].innerHTML+=html;
+}
+show_ruler()
 
 //transform input_probs from list of tileids to bigintegers
 for(ref_tile_id in input_probs){
@@ -187,6 +203,7 @@ function start(){
         } catch (error){
             console.log("Error occourred, restarting")
             console.log(error);
+            break;
             //restart
             init();
             arr = find_lowest_entropy_cell();
@@ -197,12 +214,11 @@ function start(){
     } while(x != -1 && y!= -1)
     console.log("done")
     var html = ""
-    $("#continer")[0].style.width=OUTPUT_W*16+"px"
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
             html += '<img src="img/provaIvan/tile'+output[j][i]+'.png" />'
         }
     }
-    $("#continer")[0].innerHTML=html
+    $("#wfcResultContainer")[0].innerHTML=html
 
 }
