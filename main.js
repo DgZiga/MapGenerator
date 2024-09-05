@@ -1,4 +1,4 @@
-var input_probs = IVAN_PROBS;
+var input_probs = SECOND_STRATUM_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 var debug = false;
@@ -78,7 +78,7 @@ function get_nth_set_bit(input, n){
 }
 
 //all possibilities accounted
-var probs_tmpl = (1n << BigInt(Object.keys(IVAN_PROBS).length))-1n
+var probs_tmpl = (1n << BigInt(Object.keys(input_probs).length))-1n
 
 function init(){
     //init arrays
@@ -244,7 +244,7 @@ function renderOutput(){
     var html = ""
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
-            html += '<img src="img/provaIvan/tile'+output[j][i]+'.png" />'
+            html += '<img src="img/secondoStrato/tile'+output[j][i]+'.png" />'
             if(debug && output[j][i] == -1){
                 html+='<div style="text-align:center; position: absolute; top:'+(i*1+1)*16+'px; left: '+(j*1+1)*16+'; width: 16px; height: 16px;">'+count_bits(output_probs[j][i])+'</div>'
             }

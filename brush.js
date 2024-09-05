@@ -1,7 +1,7 @@
 function populateTilePicker(){
     var html ="";
-    for(var i=0; i<Object.keys(IVAN_PROBS).length; i++){
-        html += '<img class="brushOpt" src="img/provaIvan/tile'+i+'.png" onclick="selectBrush('+i+',this)" />'
+    for(var i=0; i<Object.keys(input_probs).length; i++){
+        html += '<img class="brushOpt" src="img/secondoStrato/tile'+i+'.png" onclick="selectBrush('+i+',this)" />'
     }
 
     $("#tilePicker")[0].innerHTML = html;

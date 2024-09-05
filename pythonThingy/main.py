@@ -4,12 +4,20 @@ import json
 import math
 import pdb
 
-im = Image.open(r"img/provaIvan/ivan.png")
+srcFolder = r"img/secondoStrato"
+img = srcFolder+r"/Second Stratum.png"
+
+im = Image.open(img)
 
 
 
-rows=29
-cols=27
+
+
+
+#rows=29
+#cols=27
+rows=80
+cols=85
 tileSize=16 #tile is 16x16
 
 seenImages = []
@@ -36,7 +44,7 @@ while i<rows:
                 tileId=seenImage.id
 
         if seen != 1: #if the tile has yet to be seen, create the img, give it an id, and append it to the seen ones
-            im1.save("img/provaIvan/tile"+str(tileIdCounter)+".png")
+            im1.save(srcFolder+"/tile"+str(tileIdCounter)+".png")
             tile= Tile(tileIdCounter, im1)
             seenImages.append(tile)
             tileId = tileIdCounter
