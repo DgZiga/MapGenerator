@@ -36,6 +36,7 @@ for(ref_tile_id in input_probs){
 var output = new Array();       //2d array of output tiles. -1 indicates superposition
 var output_probs = new Array(); //output_probs is a 2d array of bigints: first two indexes are position (x/y), each position contains a bigint which is to be read as a bitmap.
 var prob_calced_ctr = new Array();
+var rollbacked_ctr = new Array(); 
 
 const BIT_LOOKUP_TBL = [0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4] //for each index contains how many bits are set for that index value (e.g BIT_LOOKUP_TBL[3] = 2 because 3 is 0011)
 function count_bits(input){
@@ -86,10 +87,12 @@ function init(){
         output_probs[i] = new Array();
         output[i] = new Array();
         prob_calced_ctr[i] = new Array();
+        rollbacked_ctr[i] = new Array();
         for(var j=0; j<OUTPUT_H; j++){
             output_probs[i][j] = probs_tmpl
             output[i][j] = -1;
             prob_calced_ctr[i][j] = false;
+            rollbacked_ctr[i][j] = false;
         }
     }
 }
@@ -110,9 +113,9 @@ function find_lowest_entropy_cell(){
         }
     }
     if(debug){
-        console.log("Returning "+lowestI+", "+lowestJ+" with count: "+lowestCnt)
+        //console.log("Returning "+lowestI+", "+lowestJ+" with count: "+lowestCnt)
     }
-    return [lowestI, lowestJ];
+    return [lowestI, lowestJ, lowestCnt];
 }
 
 //recursively recomputes superpositions for all not-yet-collapsed tiles
@@ -184,6 +187,26 @@ function start_recalc_prob(x,y){
     }
 }
 
+function unset(x, y){
+    output[x][y] = -1n
+    start_recalc_prob(x,y)
+}
+
+function start_rollback(x, y){
+    if(x<0 || y<0 || x==OUTPUT_W || y==OUTPUT_H || rollbacked_ctr[x][y]){
+        return
+    }
+    rollbacked_ctr[x][y] = true;
+    console.log("rollbacking "+x+", "+y)
+    unset(x,y)
+    if(find_lowest_entropy_cell()[2] == 0){
+        start_rollback(x-1, y  )
+        start_rollback(x  , y-1)
+        start_rollback(x+1, y  )
+        start_rollback(x  , y+1)
+    }
+}
+
 function observe(x, y, forcedVal=undefined){
     var probs = output_probs[x][y]
     if(probs === 0n){
@@ -221,6 +244,21 @@ function start(){
             x = arr[0];
             y = arr[1];
         } catch (error){
+
+            renderOutput();
+            console.log("Error occourred at ("+x+", "+y+"), rollbacking locally")
+            debugger;
+            start_rollback(x,y)
+            //reset rollbacked_ctr
+            for(var i=0; i<OUTPUT_W; i++){
+                for(var j=0; j<OUTPUT_H; j++){
+                    rollbacked_ctr[i][j] = false;
+                }
+            }
+            arr = find_lowest_entropy_cell();
+            x = arr[0];
+            y = arr[1];
+            /*
             console.log("Error occourred, restarting")
             console.log(error);
             errorCnt++;
@@ -230,7 +268,7 @@ function start(){
             //restart
             output       = structuredClone(initial_output);
             output_probs = structuredClone(intial_output_probs);
-            arr = find_lowest_entropy_cell();
+            arr = find_lowest_entropy_cell();*/
         }
         k++
     } while( (!debug && x != -1 && y!= -1) || (debug && k<1))
