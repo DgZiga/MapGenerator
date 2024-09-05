@@ -1,6 +1,8 @@
 var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
+var debug = false;
+var errorThreshold = 5;
 
 $("#container")[0].style.width=OUTPUT_W*16+"px"
 $("#wfcResultContainer")[0].style.width=OUTPUT_W*16+"px"
@@ -107,6 +109,9 @@ function find_lowest_entropy_cell(){
             }
         }
     }
+    if(debug){
+        console.log("Returning "+lowestI+", "+lowestJ+" with count: "+lowestCnt)
+    }
     return [lowestI, lowestJ];
 }
 
@@ -188,12 +193,13 @@ function observe(x, y){
     
 }
 
+init();
 function start(){
-    init();
     var arr = find_lowest_entropy_cell();
-    var x = arr[0];
-    var y = arr[1];
+    x = arr[0];
+    y = arr[1];
     var k=0;
+    var errorCnt = 0;
     do {
         try{
             observe(x,y);
@@ -203,20 +209,26 @@ function start(){
         } catch (error){
             console.log("Error occourred, restarting")
             console.log(error);
-            break;
+            errorCnt++;
+            if(debug || errorCnt >= errorThreshold){
+                break;
+            }
             //restart
             init();
             arr = find_lowest_entropy_cell();
-            x = arr[0];
-            y = arr[1];
         }
         k++
-    } while(x != -1 && y!= -1)
+    } while( (!debug && x != -1 && y!= -1) || (debug && k<1))
+
     console.log("done")
+
     var html = ""
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
             html += '<img src="img/provaIvan/tile'+output[j][i]+'.png" />'
+            if(debug && output[j][i] == -1){
+                html+='<div style="text-align:center; position: absolute; top:'+(i*1+1)*16+'px; left: '+(j*1+1)*16+'; width: 16px; height: 16px;">'+count_bits(output_probs[j][i])+'</div>'
+            }
         }
     }
     $("#wfcResultContainer")[0].innerHTML=html
