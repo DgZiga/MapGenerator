@@ -2,6 +2,8 @@ var input_probs = SECOND_STRATUM_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 var debug = false;
+function setDebug(checkbox){debug=$(checkbox)[0].checked}
+
 var errorThreshold = 5;
 
 $("#container")[0].style.width=OUTPUT_W*16+"px"
@@ -209,6 +211,10 @@ var intial_output_probs;
 function start(){
     initial_output      = structuredClone(output);
     intial_output_probs = structuredClone(output_probs);
+    wfc()
+}
+
+function wfc(){
     var arr = find_lowest_entropy_cell();
     x = arr[0];
     y = arr[1];
@@ -220,16 +226,20 @@ function start(){
             arr = find_lowest_entropy_cell();
             x = arr[0];
             y = arr[1];
+            if(debug){
+                renderOutput();
+                setTimeout(wfc, 150);
+            }
         } catch (error){
             console.log("Error occourred, restarting")
             console.log(error);
             errorCnt++;
+            output       = structuredClone(initial_output);
+            output_probs = structuredClone(intial_output_probs);
             if(debug || errorCnt >= errorThreshold){
                 break;
             }
             //restart
-            output       = structuredClone(initial_output);
-            output_probs = structuredClone(intial_output_probs);
             arr = find_lowest_entropy_cell();
         }
         k++
