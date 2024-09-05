@@ -1,7 +1,7 @@
 var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
-var debug = false;
+var debug = true;
 var errorThreshold = 5;
 
 $("#container")[0].style.width=OUTPUT_W*16+"px"
@@ -172,13 +172,17 @@ function recalc_prob(x, y){
 
 }   
 
-function observe(x, y){
+function observe(x, y, forcedVal=undefined){
     var probs = output_probs[x][y]
     if(probs === 0n){
         throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities');
     }
-    var i = Math.floor(Math.random() * count_bits(probs));
-    output[x][y] = get_nth_set_bit(output_probs[x][y], i)
+    if(forcedVal !== undefined){
+        output[x][y] = BigInt(forcedVal);
+    } else {
+        var i = Math.floor(Math.random() * count_bits(probs));
+        output[x][y] = get_nth_set_bit(output_probs[x][y], i)
+    }
     output_probs[x][y] = 1n << output[x][y];
 
     //propagate changes to nearby nodes
@@ -222,6 +226,10 @@ function start(){
 
     console.log("done")
 
+    renderOutput();
+}
+
+function renderOutput(){
     var html = ""
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
@@ -232,5 +240,4 @@ function start(){
         }
     }
     $("#wfcResultContainer")[0].innerHTML=html
-
 }
