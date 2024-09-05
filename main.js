@@ -1,7 +1,7 @@
 var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
-var debug = true;
+var debug = false;
 var errorThreshold = 5;
 
 $("#container")[0].style.width=OUTPUT_W*16+"px"
@@ -172,6 +172,18 @@ function recalc_prob(x, y){
 
 }   
 
+function start_recalc_prob(x,y){
+    //propagate changes to nearby nodes
+    recalc_prob(x, y)
+
+    //reset prob_calced_ctr
+    for(var i=0; i<OUTPUT_W; i++){
+        for(var j=0; j<OUTPUT_H; j++){
+            prob_calced_ctr[i][j] = false;
+        }
+    }
+}
+
 function observe(x, y, forcedVal=undefined){
     var probs = output_probs[x][y]
     if(probs === 0n){
@@ -186,19 +198,17 @@ function observe(x, y, forcedVal=undefined){
     output_probs[x][y] = 1n << output[x][y];
 
     //propagate changes to nearby nodes
-    recalc_prob(x, y)
-
-    //reset prob_calced_ctr
-    for(var i=0; i<OUTPUT_W; i++){
-        for(var j=0; j<OUTPUT_H; j++){
-            prob_calced_ctr[i][j] = false;
-        }
-    }
-    
+    start_recalc_prob(x, y)    
 }
 
 init();
+
+var initial_output;
+var intial_output_probs;
+
 function start(){
+    initial_output      = structuredClone(output);
+    intial_output_probs = structuredClone(output_probs);
     var arr = find_lowest_entropy_cell();
     x = arr[0];
     y = arr[1];
@@ -218,7 +228,8 @@ function start(){
                 break;
             }
             //restart
-            init();
+            output       = structuredClone(initial_output);
+            output_probs = structuredClone(intial_output_probs);
             arr = find_lowest_entropy_cell();
         }
         k++
