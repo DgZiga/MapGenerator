@@ -2,27 +2,31 @@ var input_probs = IVAN_PROBS;
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 
-var output = new Array();
-var output_probs = new Array(); //output is a 3d array: first two indexes are position (x/y), each position contains a list of possibilities
+var output = new Array();       //2d array of output tiles. -1 indicates superposition
+var output_probs = new Array(); //output_probs is a 3d array: first two indexes are position (x/y), each position contains a list of possibilities
 var prob_calced_ctr = new Array();
 
-//init output array
+//just an array of all the probabilities to be cloned
 var probs_tmpl = new Array();
 for(var i=0; i<Object.keys(input_probs).length; i++){
     probs_tmpl[i]=i;
 }
 
-for(var i=0; i<OUTPUT_W; i++){
-    output_probs[i] = new Array();
-    output[i] = new Array();
-    prob_calced_ctr[i] = new Array();
-    for(var j=0; j<OUTPUT_H; j++){
-        output_probs[i][j] = probs_tmpl.slice(); //clone array
-        output[i][j] = -1;
-        prob_calced_ctr[i][j] = false;
+function init(){
+    //init arrays
+    for(var i=0; i<OUTPUT_W; i++){
+        output_probs[i] = new Array();
+        output[i] = new Array();
+        prob_calced_ctr[i] = new Array();
+        for(var j=0; j<OUTPUT_H; j++){
+            output_probs[i][j] = probs_tmpl.slice(); //clone array
+            output[i][j] = -1;
+            prob_calced_ctr[i][j] = false;
+        }
     }
 }
 
+//finds the cell with the lowest non-zero (not-yet-collapsed) amount of possibilities
 function find_lowest_entropy_cell(){
     var lowestI = -1;
     var lowestJ = -1;
@@ -39,6 +43,7 @@ function find_lowest_entropy_cell(){
     return [lowestI, lowestJ];
 }
 
+//recursively recomputes superpositions for all not-yet-collapsed tiles
 function recalc_prob(x, y){
     if(x<0 || y<0 || x==OUTPUT_W || y==OUTPUT_H || prob_calced_ctr[x][y]){
         return
@@ -99,6 +104,8 @@ function observe(x, y){
 
     //propagate changes to nearby nodes
     recalc_prob(x, y)
+
+    //reset prob_calced_ctr
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
             prob_calced_ctr[i][j] = false;
@@ -108,17 +115,26 @@ function observe(x, y){
 }
 
 function start(){
+    init();
     var arr = find_lowest_entropy_cell();
     var x = arr[0];
     var y = arr[1];
-    var i=0;
     do {
-        observe(x,y);
-        arr = find_lowest_entropy_cell();
-        x = arr[0];
-        y = arr[1];
-        i++;
-    } while(i<20)//x != -1 && y!= -1)
+        try{
+            observe(x,y);
+            arr = find_lowest_entropy_cell();
+            x = arr[0];
+            y = arr[1];
+        } catch (error){
+            console.log("Error occourred, restarting")
+            console.log(error);
+            //restart
+            init();
+            arr = find_lowest_entropy_cell();
+            x = arr[0];
+            y = arr[1];
+        }
+    } while(x != -1 && y!= -1)
     console.log("done")
     var html = ""
     $("#continer")[0].style.width=OUTPUT_W*16+"px"
