@@ -36,13 +36,11 @@ function show_ruler(){
 }
 show_ruler()
 
+
 //transform input_probs from list of tileids to bigintegers
 for(ref_tile_id in input_probs){
     for(dir in input_probs[ref_tile_id]){
-        var res = 0n
-        for(tile_id of input_probs[ref_tile_id][dir]){
-            res |= 1n << BigInt(tile_id)
-        }
+        var res = tile_ids_to_bitmap(input_probs[ref_tile_id][dir])
         input_probs[ref_tile_id][dir] = res
     }
 }
@@ -76,6 +74,15 @@ function bitmap_to_tile_ids(input){
     }
     return out
 }
+//takes in a int[] and converts it to a bitmap
+function tile_ids_to_bitmap(input){
+    var out = 0n;
+    for(tile_id of input){
+        out |= 1n << BigInt(tile_id)
+    }
+    return out;
+}
+
 
 function get_nth_set_bit(input, n){
     var i=0;
@@ -197,6 +204,12 @@ function start_recalc_prob(x,y){
             prob_calced_ctr[i][j] = false;
         }
     }
+}
+
+function set_superposition(x, y, superpos_array){
+    var superpos = tile_ids_to_bitmap(superpos_array);
+    output_probs[x][y] = superpos;
+    start_recalc_prob(x, y)
 }
 
 function observe(x, y, forcedVal=undefined){

@@ -11,11 +11,13 @@
         x: <input type="number" id="brushXInput"> y: <input type="number" id="brushYInput"> <button onclick="paint()" type="button">Paint</button><br />
         debug: <input type="checkbox" onchange="setDebug(this)">
         <button onclick="start()" type="button">Start</button>
-        <button onclick="init(); renderOutput()" type="button">Reset</button><br />
+        <button onclick="init(); renderOutput()" type="button">Reset</button>
+        <button onclick="init(); paint_walkables()" type="button">Set Walkable</button><br />
         <div id="container" style="padding-left: 16px; padding-top: 16px; position:relative">
             <div id="wfcResultContainer"></div>
         </div>
         <script src="main.js"></script>
         <script src="brush.js"></script>
+        <script src="walkable.js"></script>
     </body>
 </html>
