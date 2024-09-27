@@ -208,7 +208,11 @@ function start_recalc_prob(x,y){
 
 function set_superposition(x, y, superpos_array){
     var superpos = tile_ids_to_bitmap(superpos_array);
+    try{
     output_probs[x][y] = superpos;
+    } catch(error){
+        debugger;
+    }
     start_recalc_prob(x, y)
 }
 

@@ -12,7 +12,7 @@
         debug: <input type="checkbox" onchange="setDebug(this)">
         <button onclick="start()" type="button">Start</button>
         <button onclick="init(); renderOutput()" type="button">Reset</button>
-        <button onclick="init(); paint_walkables()" type="button">Set Walkable</button><br />
+        <button onclick="init(); randomize_walkable_coords(); paint_walkables()" type="button">Set Walkable</button><br />
         <div id="container" style="padding-left: 16px; padding-top: 16px; position:relative">
             <div id="wfcResultContainer"></div>
         </div>
