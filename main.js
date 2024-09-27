@@ -1,4 +1,17 @@
+
+
+//ivan
+var input_probs = IVAN_PROBS;
+var img_path = "provaIvan"
+
+//second stratum
 var input_probs = SECOND_STRATUM_PROBS;
+var img_path = "secondoStrato"
+
+//Fifth stratum
+var input_probs = FIFTH_STATUM_PROBS;
+var img_path = "quintoStrato"
+
 const OUTPUT_W = 20;
 const OUTPUT_H = 20;
 var debug = false;
@@ -254,7 +267,7 @@ function renderOutput(){
     var html = ""
     for(var i=0; i<OUTPUT_W; i++){
         for(var j=0; j<OUTPUT_H; j++){
-            html += '<img src="img/secondoStrato/tile'+output[j][i]+'.png" />'
+            html += '<img src="img/'+img_path+'/tile'+output[j][i]+'.png" />'
             if(debug && output[j][i] == -1){
                 html+='<div style="text-align:center; position: absolute; top:'+(i*1+1)*16+'px; left: '+(j*1+1)*16+'; width: 16px; height: 16px;">'+count_bits(output_probs[j][i])+'</div>'
             }

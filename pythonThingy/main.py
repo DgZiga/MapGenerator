@@ -4,8 +4,8 @@ import json
 import math
 import pdb
 
-srcFolder = r"img/secondoStrato"
-img = srcFolder+r"/Second Stratum.png"
+srcFolder = r"img/quintoStrato"
+img = srcFolder+r"/Fifth_Stratum.bmp"
 
 im = Image.open(img)
 
@@ -13,11 +13,17 @@ im = Image.open(img)
 
 
 
-
+#ivan
 #rows=29
 #cols=27
-rows=80
-cols=85
+
+#second stratum
+#rows=80
+#cols=85
+
+#fifth stratum
+rows=60
+cols=60
 tileSize=16 #tile is 16x16
 
 seenImages = []
