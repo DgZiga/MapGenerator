@@ -35,6 +35,10 @@ function dumb_algorithm(){
     while(curr_x != end_coords[0] || curr_y != end_coords[1]){
         out = out.concat([[curr_x, curr_y]])
         var dir = shortest_dir([curr_x, curr_y], end_coords);//randomInt(4); //value between 0-3. 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
+        if(randomInt(5) == 0){ // with 1/5 chance just pick a random direction
+            var dir = randomInt(4); //value between 0-3. 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
+        }
+
         //console.log("picked "+dir_name[dir]+" direction")
         var variable_len=randomInt(15);
         for(var i =0 ; i<variable_len; i++){
