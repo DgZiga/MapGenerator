@@ -11,8 +11,11 @@ function paint_walkables() {
 
 function randomize_walkable_coords(){
     //var new_coords = dumb_algorithm();
-    walkables_coords= dumb_algorithm();
-    
+    var fixed_end_coords = random_edge_coords();
+    var paths_no =2;
+    for(var i=0; i<paths_no; i++){
+        walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
+    }
 }
 
 
@@ -24,10 +27,10 @@ var walk_mod=[ //indexed by dir. 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
 ]
 var dir_name = ["up", "down", "left", "right"]
 
-function dumb_algorithm(){
+function dumb_algorithm(fixed_end_coords = undefined){
     var out = []
     var start_coords = random_edge_coords()
-    var end_coords   = random_edge_coords()
+    var end_coords   = fixed_end_coords === undefined ? random_edge_coords() : fixed_end_coords
     console.log("Running dumb alg on "+start_coords+"; "+end_coords)
     var curr_x = start_coords[0];
     var curr_y = start_coords[1];
