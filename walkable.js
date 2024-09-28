@@ -2,11 +2,11 @@ var walkables_coords = []
 
 
 
-function paint_walkables() {
+function paint_walkables(wfc) {
     for(coords of walkables_coords){
-        set_superposition(coords[0],coords[1],WALKABLE_TILES)
+        wfc.set_superposition(coords[0],coords[1],WALKABLE_TILES)
     }
-    renderOutput();
+    renderOutput(wfc);
 }
 
 function randomize_walkable_coords(){
@@ -50,8 +50,8 @@ function dumb_algorithm(fixed_end_coords = undefined){
             curr_y += walk_mod[dir][1];
             if(curr_x < 0){ curr_x = 0;}
             if(curr_y < 0){ curr_y = 0;}
-            if(curr_x >= OUTPUT_W){ curr_x = OUTPUT_W-1;}
-            if(curr_y >= OUTPUT_H){ curr_y = OUTPUT_H-1;}
+            if(curr_x >= WFC.OUTPUT_W){ curr_x = WFC.OUTPUT_W-1;}
+            if(curr_y >= WFC.OUTPUT_H){ curr_y = WFC.OUTPUT_H-1;}
 
             if(curr_x == end_coords[0] && curr_y == end_coords[1]){
                 continue;
@@ -62,14 +62,14 @@ function dumb_algorithm(fixed_end_coords = undefined){
 }
 
 function random_edge_coords(){
-    var random_coords = [randomInt(OUTPUT_W), randomInt(OUTPUT_H)]
+    var random_coords = [randomInt(WFC.OUTPUT_W), randomInt(WFC.OUTPUT_H)]
     var which_fixed = randomInt(2); //0 = x coord is fixed, 1 = y coord is fixed
     var min_or_max  = randomInt(2); //0 = fixed coord will be set to min, 1 = fixed coord will be set to max
 
     if(which_fixed == 0){
-        return [min_or_max == 0 ? 0 : OUTPUT_W-1, random_coords[1]]
+        return [min_or_max == 0 ? 0 : WFC.OUTPUT_W-1, random_coords[1]]
     } else {
-        return [random_coords[0]                , min_or_max == 0 ? 0 : OUTPUT_H-1]
+        return [random_coords[0]                , min_or_max == 0 ? 0 : WFC.OUTPUT_H-1]
     }
 }
 

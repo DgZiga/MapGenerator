@@ -10,13 +10,14 @@
     </head>
     <body>
         <div id="tilePicker"></div>
-        x: <input type="number" id="brushXInput"> y: <input type="number" id="brushYInput"> <button onclick="paint()" type="button">Paint</button><br />
-        debug: <input type="checkbox" onchange="setDebug(this)">
-        <button onclick="start()" type="button">Start</button>
-        <button onclick="init(); renderOutput()" type="button">Reset</button>
-        <button onclick="init(); randomize_walkable_coords(); paint_walkables()" type="button">Set Walkable</button><br />
+        x: <input type="number" id="brushXInput"> y: <input type="number" id="brushYInput"> <button onclick="paint(mainWfc)" type="button">Paint</button><br />
+        debug: <input type="checkbox" onchange="mainWfc.setDebug(this)">
+        <button onclick="start(mainWfc)" type="button">Start</button>
+        <button onclick="mainWfc.init(); renderOutput(mainWfc)" type="button">Reset</button>
+        <button onclick="mainWfc.init(); randomize_walkable_coords(); paint_walkables(mainWfc)" type="button">Set Walkable</button><br />
         <div id="container" style="padding-left: 16px; padding-top: 16px; position:relative">
-            <div id="wfcResultContainer"></div>
+            <div id="wfcResultContainer1"></div>
+            <div id="wfcResultContainer2"></div>
         </div>
         <script src="main.js"></script>
         <script src="brush.js"></script>
