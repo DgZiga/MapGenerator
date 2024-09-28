@@ -155,6 +155,9 @@ class WFC {
         this.output_probs[x][y] = superpos;
         this.start_recalc_prob(x, y)
     }
+    set_bm_superposition(x, y, superpos_bm){
+        this.output_probs[x][y] = superpos_bm;
+    }
 
     observe(x, y, forcedVal=undefined){
         var probs = this.output_probs[x][y]

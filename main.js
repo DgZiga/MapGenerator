@@ -28,13 +28,52 @@ function show_ruler(){
 }
 show_ruler()
 
+function set_debug(debug){
+    for(wfc of wfcs){
+        wfc.setDebug(debug)
+    }
+}
 
 function start(){
     for(wfc of wfcs){
-        wfc.wfc();
-        renderOutput(wfc);
+        runAndRenderWfc(wfc)
     }
 }
+
+function runAndRenderWfc(wfc){
+    wfc.wfc();
+    renderOutput(wfc);
+}
+
+function calc_probs_from_neighbours(wfc_i){
+    var wfc = wfcs[wfc_i];
+    //find neighbouring cells
+    //We assume that the algorithm goes from top left to right bottom row-by-row, so we only need to find the tile to the left and the one above
+    var left_wfc = undefined
+    var above_wfc = undefined
+    //tile on the left:
+    if(wfc_i % WFCS_COLS_NO != 0){ //if it's start of row there is no tile on the left
+        left_wfc = wfcs[wfc_i - 1]
+    }
+
+    //tile above:
+    if(wfc_i >= WFCS_COLS_NO){ //if it's first row there is no tile above
+        above_wfc = wfcs[wfc_i-WFCS_COLS_NO]
+    }
+
+    //assume equal width, eight, and available tiles
+    //for each tileId on the rightmost wall of the left wfc, set the current changes to their right_tiles
+    for(var i=0; i<WFC.OUTPUT_H; i++){
+        var left_tile_id = left_wfc.output[WFC.OUTPUT_W-1][i];
+        var possible_superpositions = wfc.input_probs[left_tile_id]["right"]
+        wfc.set_bm_superposition(0, i, possible_superpositions);
+    }
+    wfc.start_recalc_prob(0,0)
+
+    renderOutput(wfc)
+    
+}
+
 function reset(){
     for(wfc of wfcs){
         wfc.init();

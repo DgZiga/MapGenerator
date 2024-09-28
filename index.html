@@ -11,7 +11,7 @@
     <body>
         <div id="tilePicker"></div>
         x: <input type="number" id="brushXInput"> y: <input type="number" id="brushYInput"> <button onclick="paint(mainWfc)" type="button">Paint</button><br />
-        debug: <input type="checkbox" onchange="mainWfc.setDebug(this)">
+        debug: <input type="checkbox" onchange="set_debug(this)">
         <button onclick="start()" type="button">Start</button>
         <button onclick="reset()" type="button">Reset</button>
         <button onclick="mainWfc.init(); randomize_walkable_coords(); paint_walkables(mainWfc)" type="button">Set Walkable</button><br />
