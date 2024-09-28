@@ -13,8 +13,8 @@
 class WFC {
     input_probs = structuredClone(FIFTH_STATUM_PROBS);
     static img_path = "quintoStrato"
-    static OUTPUT_W = 20;
-    static OUTPUT_H = 20;
+    static OUTPUT_W = 40;
+    static OUTPUT_H = 40;
     debug = false;
     setDebug(checkbox){this.debug=$(checkbox)[0].checked}
     output = new Array();       //2d array of output tiles. -1 indicates superposition
@@ -28,7 +28,7 @@ class WFC {
     //all possibilities accounted
     probs_tmpl = (1n << BigInt(Object.keys(this.input_probs).length))-1n
 
-    errorThreshold = 10;
+    errorThreshold = 50;
 
     constructor() {
         //transform this.input_probs from list of tileids to bigintegers

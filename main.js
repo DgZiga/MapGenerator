@@ -1,6 +1,6 @@
 
-var wfcs = [new WFC(), new WFC(), new WFC(), new WFC()]
-const WFCS_COLS_NO = 2
+var wfcs = [new WFC()]
+const WFCS_COLS_NO = 1
 const WFCS_ROWS_NO = Math.ceil(wfcs.length / WFCS_COLS_NO)
 
 function create_wfc_containers(){
