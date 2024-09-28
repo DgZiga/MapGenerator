@@ -1,13 +1,23 @@
-var mainWfc = new WFC();
 
-//$("#container")[0].style.width=WFC.OUTPUT_W*16+"px"
-$("#wfcResultContainer1")[0].style.width=WFC.OUTPUT_W*16+"px"
-$("#wfcResultContainer2")[0].style.width=WFC.OUTPUT_W*16+"px"
+var wfcs = [new WFC(), new WFC(), new WFC(), new WFC()]
+const WFCS_COLS_NO = 2
+const WFCS_ROWS_NO = Math.ceil(wfcs.length / WFCS_COLS_NO)
+
+function create_wfc_containers(){
+    var html =''
+    for(wfc of wfcs){
+        html+='<div id="wfcResultContainer'+wfc.id+'" style="float: left; width: '+WFC.OUTPUT_W*16+'px"></div>'
+    }
+    $("#container")[0].innerHTML = html;
+}
+create_wfc_containers()
+
+var mainWfc = wfcs[0];
 
 function show_ruler(){
     var html=""
-    for(var i=0; i<WFC.OUTPUT_W; i++){
-        for(var j=0; j<WFC.OUTPUT_H; j++){
+    for(var i=0; i<WFC.OUTPUT_W * WFCS_ROWS_NO; i++){     
+        for(var j=0; j<WFC.OUTPUT_H * WFCS_COLS_NO; j++){ 
             if(i==0){
                 html+='<div style="text-align:center; position: absolute; top:'+i*16+'px; left: '+(j*1+1)*16+'px; width: 16px; height: 16px;">'+j+'</div>'
             }
@@ -19,12 +29,17 @@ function show_ruler(){
 show_ruler()
 
 
-var initial_output;
-var intial_output_probs;
-
-function start(wfc){
-    wfc.wfc();
-    renderOutput(wfc);
+function start(){
+    for(wfc of wfcs){
+        wfc.wfc();
+        renderOutput(wfc);
+    }
+}
+function reset(){
+    for(wfc of wfcs){
+        wfc.init();
+        renderOutput(wfc);
+    }
 }
 
 function renderOutput(wfc){

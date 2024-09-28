@@ -28,7 +28,7 @@ class WFC {
     //all possibilities accounted
     probs_tmpl = (1n << BigInt(Object.keys(this.input_probs).length))-1n
 
-    errorThreshold = 5;
+    errorThreshold = 10;
 
     constructor() {
         //transform this.input_probs from list of tileids to bigintegers
