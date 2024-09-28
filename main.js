@@ -6,7 +6,7 @@ const WFCS_ROWS_NO = Math.ceil(wfcs.length / WFCS_COLS_NO)
 function create_wfc_containers(){
     var html =''
     for(wfc of wfcs){
-        html+='<div id="wfcResultContainer'+wfc.id+'" style="float: left; width: '+WFC.OUTPUT_W*16+'px"></div>'
+        html+='<div id="wfcResultContainer'+wfc.id+'" style="position:relative; float: left; width: '+WFC.OUTPUT_W*16+'px"></div>'
     }
     $("#container")[0].innerHTML = html;
 }
@@ -87,7 +87,7 @@ function renderOutput(wfc){
         for(var j=0; j<WFC.OUTPUT_H; j++){
             html += '<img src="img/'+WFC.img_path+'/tile'+wfc.output[j][i]+'.png" />'
             if(wfc.debug && wfc.output[j][i] == -1){
-                html+='<div style="text-align:center; position: absolute; top:'+(i*1+1)*16+'px; left: '+(j*1+1)*16+'; width: 16px; height: 16px;">'+count_bits(wfc.output_probs[j][i])+'</div>'
+                html+='<div style="text-align:center; position: absolute; top:'+i*16+'px; left: '+j*16+'; width: 16px; height: 16px;">'+count_bits(wfc.output_probs[j][i])+'</div>'
             }
         }
     }
