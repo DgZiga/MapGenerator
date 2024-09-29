@@ -18,10 +18,18 @@ function populateAddTilesList(){
     for(var i=0; i<Object.keys(curr_probs).length; i++){
         html += '<div class="tilesListOption" onclick="addPossibility('+i+')" ><img src="../img/'+img_path+'/tile'+i+'.png"" /></div>'
     }
-    $("#addTileWindow")[0].innerHTML=html;
+    $("#tileListMenu")[0].innerHTML=html;
 }
 populateTilesList();
-populateAddTilesList();
+
+
+
+//Input handling:
+$('body').keypress(function(e){
+    if(e.which == 13){//Enter
+        exitAddTileSubmenu();
+    }
+});
 
 
 
@@ -107,10 +115,14 @@ function renderTilePicker(){
 
 //ADDTILE SUBMENU
 function startAddTileMenu(){
-    $("#addTileSubmenu").show();
+    $("#commandsMenu")[0].innerHTML="Press enter to exit"
+    populateAddTilesList()
+}
+function exitAddTileSubmenu(){
+    populateTilesList()
+    $("#commandsMenu")[0].innerHTML=""
 }
 function addPossibility(tileId){
     addTileToPossibility(working_tile_id, tileId, working_side);
     renderAll();
-    $("#addTileSubmenu").hide();
 }
