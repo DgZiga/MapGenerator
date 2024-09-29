@@ -11,8 +11,13 @@
     var img_path = "quintoStrato"
      */
 class WFC {
-    input_probs = structuredClone(FIFTH_STATUM_PROBS);
-    static img_path = "quintoStrato"
+    //input_probs = structuredClone(FIFTH_STATUM_PROBS);
+    //static img_path = "quintoStrato"
+
+    input_probs = structuredClone(CUSTOM_PROBS);
+    static img_path = "quintoStratoRed"
+
+
     static OUTPUT_W = 40;
     static OUTPUT_H = 40;
     debug = false;

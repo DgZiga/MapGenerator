@@ -5,7 +5,7 @@ const WFCS_ROWS_NO = Math.ceil(wfcs.length / WFCS_COLS_NO)
 
 function create_wfc_containers(){
     var html =''
-    for(wfc of wfcs){
+    for(var wfc of wfcs){
         html+='<div id="wfcResultContainer'+wfc.id+'" style="position:relative; float: left; width: '+WFC.OUTPUT_W*16+'px"></div>'
     }
     $("#container")[0].innerHTML = html;
@@ -29,13 +29,13 @@ function show_ruler(){
 show_ruler()
 
 function set_debug(debug){
-    for(wfc of wfcs){
+    for(var wfc of wfcs){
         wfc.setDebug(debug)
     }
 }
 
 function start(){
-    for(wfc of wfcs){
+    for(var wfc of wfcs){
         runAndRenderWfc(wfc)
     }
 }

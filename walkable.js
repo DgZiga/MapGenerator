@@ -4,7 +4,7 @@ var walkables_coords = []
 
 function paint_walkables(wfc) {
     for(coords of walkables_coords){
-        wfc.set_superposition(coords[0],coords[1],WALKABLE_TILES)
+        wfc.set_superposition(coords[0],coords[1],CUSTOM_WALKABLE)
     }
     renderOutput(wfc);
 }
