@@ -5,7 +5,7 @@ var img_path = "quintoStrato"
 var working_tile_id;
 var working_side ='up';
 
-//Populate list of tiles
+//Init: Populate list of tiles
 function populateTilesList(){
     var html ="";
     for(var i=0; i<Object.keys(curr_probs).length; i++){
@@ -35,7 +35,31 @@ function selectWorkingSide(side, div){
     
 }
 
+
+
+
+//curr_probs handling
+function removeTileFromPossibility(sourceTile, tileIdToRemove, dir){
+    var working_probs = curr_probs[sourceTile][dir]
+    var i = working_probs.indexOf(tileIdToRemove)
+    if (i > -1){
+        working_probs.splice(i, 1)
+    } else {
+        throw 'trying to remove inexisting tile '+tileIdToRemove+' from possibility ['+sourceTile+']['+dir+']'
+    }
+}
+
+
+
+
+
+
 //Render
+function renderAll(){
+    renderWorkingTile();
+    renderTilePicker();
+}
+
 function renderWorkingTile(){
     $("#workingTileCenter")[0].innerHTML='<img src="../img/'+img_path+'/tile'+working_tile_id+'.png" style="width:100%; height: 100%;" />'
     
@@ -56,7 +80,8 @@ function renderTilePicker(){
     var tileIds = curr_probs[working_tile_id][working_side];
     var html = "";
     for(var tileId of tileIds){
-        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 3 3" />'
+        var onclick = "removeTileFromPossibility("+working_tile_id+","+tileId+",'"+working_side+"'); renderAll()"
+        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 3 3" onclick="'+onclick+'"/>'
     }
     html+='<img src="./tileAdd.png" style="float:left; width:20%; margin: 3 3" />'
     $("#tilePickerMenu")[0].innerHTML = html;
