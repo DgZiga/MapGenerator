@@ -41,7 +41,7 @@ function start(){
 }
 
 function runAndRenderWfc(wfc){
-    wfc.wfc();
+    wfc.start();
     renderOutput(wfc);
 }
 

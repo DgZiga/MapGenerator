@@ -44,8 +44,6 @@ class WFC {
             }
         }
         this.init();
-        this.initial_output      = structuredClone(this.output);
-        this.intial_output_probs = structuredClone(this.output_probs);
         this.id = WFC.id_ctr++
     }
     
@@ -179,6 +177,12 @@ class WFC {
 
         //propagate changes to nearby nodes
         this.start_recalc_prob(x, y)    
+    }
+
+    start(){
+        this.initial_output      = structuredClone(this.output);
+        this.intial_output_probs = structuredClone(this.output_probs);
+        this.wfc();
     }
 
     wfc(){
