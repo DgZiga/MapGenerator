@@ -101,3 +101,38 @@ img{image-rendering: pixelated}
         box-sizing: border-box;
     }
 }
+
+#addTileSubmenu{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100svh;
+    width: 100vw;
+    display: none;
+
+    #addTileBg{
+        height: 100svh;
+        width: 100vw;
+        background-color: gray;
+        opacity: 0.8;
+    }
+    #addTileWindow{
+        height: 90svh;
+        width: 20vw;
+        position: absolute;
+        background-color: white;
+        top: 5svh;
+        left: 40vw;
+        overflow-y: scroll;
+        
+        .tilesListOption{
+            width: 64px;
+            height: 64px;
+            margin: 2 auto;
+            img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

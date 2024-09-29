@@ -13,7 +13,15 @@ function populateTilesList(){
     }
     $("#tileListMenu")[0].innerHTML=html;
 }
+function populateAddTilesList(){
+    var html ="";
+    for(var i=0; i<Object.keys(curr_probs).length; i++){
+        html += '<div class="tilesListOption" onclick="addPossibility('+i+')" ><img src="../img/'+img_path+'/tile'+i+'.png"" /></div>'
+    }
+    $("#addTileWindow")[0].innerHTML=html;
+}
 populateTilesList();
+populateAddTilesList();
 
 
 
@@ -46,6 +54,15 @@ function removeTileFromPossibility(sourceTile, tileIdToRemove, dir){
         working_probs.splice(i, 1)
     } else {
         throw 'trying to remove inexisting tile '+tileIdToRemove+' from possibility ['+sourceTile+']['+dir+']'
+    }
+}
+function addTileToPossibility(sourceTile, tileIdToAdd, dir){
+    var working_probs = curr_probs[sourceTile][dir]
+    var i = working_probs.indexOf(tileIdToAdd)
+    if (i > -1){
+        return;
+    } else {
+        curr_probs[sourceTile][dir] = working_probs.concat(tileIdToAdd)
     }
 }
 
@@ -83,7 +100,17 @@ function renderTilePicker(){
         var onclick = "removeTileFromPossibility("+working_tile_id+","+tileId+",'"+working_side+"'); renderAll()"
         html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 3 3" onclick="'+onclick+'"/>'
     }
-    html+='<img src="./tileAdd.png" style="float:left; width:20%; margin: 3 3" />'
+    html+='<img src="./tileAdd.png" style="float:left; width:20%; margin: 3 3" onclick="startAddTileMenu()" />'
     $("#tilePickerMenu")[0].innerHTML = html;
 
+}
+
+//ADDTILE SUBMENU
+function startAddTileMenu(){
+    $("#addTileSubmenu").show();
+}
+function addPossibility(tileId){
+    addTileToPossibility(working_tile_id, tileId, working_side);
+    renderAll();
+    $("#addTileSubmenu").hide();
 }
