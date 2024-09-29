@@ -21,7 +21,7 @@ function populateAddTilesList(){
     $("#tileListMenu")[0].innerHTML=html;
 }
 populateTilesList();
-
+renderCommandMenu()
 
 
 //Input handling:
@@ -73,7 +73,9 @@ function addTileToPossibility(sourceTile, tileIdToAdd, dir){
         curr_probs[sourceTile][dir] = working_probs.concat(tileIdToAdd)
     }
 }
-
+function printCurrProbs(){
+    console.log(JSON.stringify(curr_probs))
+}
 
 
 
@@ -120,9 +122,15 @@ function startAddTileMenu(){
 }
 function exitAddTileSubmenu(){
     populateTilesList()
-    $("#commandsMenu")[0].innerHTML=""
+    renderCommandMenu()
 }
 function addPossibility(tileId){
     addTileToPossibility(working_tile_id, tileId, working_side);
     renderAll();
+}
+
+//Render commands menu
+function renderCommandMenu(){
+    var html ='<button type="button" onclick="printCurrProbs()">Print</button>'
+    $("#commandsMenu")[0].innerHTML = html;
 }
