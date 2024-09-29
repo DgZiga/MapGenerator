@@ -1,14 +1,21 @@
 var walkables_coords = []
 
+var non_walkable_superpos = Object.keys(CUSTOM_PROBS).filter(e=>{
+    return CUSTOM_WALKABLE.findIndex(e2=>{
+        return e2==e
+    }) == -1 ? true : false
+})
 
 
 function paint_walkables(wfc) {
-    /*for(var i=0; i<WFC.OUTPUT_W; i++){
+    for(var i=0; i<WFC.OUTPUT_W; i++){
         for(var j=0; j<WFC.OUTPUT_H; j++){
-            var coord = [i, j];
-            if(coords)
+            var isTileWalkable = walkables_coords.findIndex(e=>{return e.x===i && e.y===j}) == -1 ? false : true;
+            if(!isTileWalkable){
+                wfc.set_superposition(i, j, non_walkable_superpos)
+            }
         }
-    }*/
+    }
     for(coords of walkables_coords){
         wfc.set_superposition(coords.x,coords.y,CUSTOM_WALKABLE)
     }
