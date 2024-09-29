@@ -1,5 +1,5 @@
 
-var curr_probs = structuredClone(FIFTH_STATUM_PROBS);
+var curr_probs = structuredClone(EMPTY_FIFTH_STATUM_PROBS);
 var img_path = "quintoStrato"
 
 var working_tile_id;
