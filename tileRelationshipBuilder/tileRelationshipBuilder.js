@@ -3,7 +3,7 @@ var curr_probs = structuredClone(FIFTH_STATUM_PROBS);
 var img_path = "quintoStrato"
 
 var working_tile_id;
-var working_side;
+var working_side ='up';
 
 //Populate list of tiles
 function populateTilesList(){
@@ -20,13 +20,8 @@ populateTilesList();
 //Choose working tileset onclick
 function chooseWorkingTile(tileId, div){
     working_tile_id=tileId;
-    $("#workingTileCenter")[0].innerHTML='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="width:100%; height: 100%;" />'
-    
-    $("#workingTileRight")[0].innerHTML=htmlForPossibilities(curr_probs[tileId]["right"])
-    $("#workingTileLeft" )[0].innerHTML=htmlForPossibilities(curr_probs[tileId]["left" ])
-    $("#workingTileUp"   )[0].innerHTML=htmlForPossibilities(curr_probs[tileId]["up"   ])
-    $("#workingTileDown" )[0].innerHTML=htmlForPossibilities(curr_probs[tileId]["down" ])
-
+    renderWorkingTile();
+    renderTilePicker();
     $(".tilesListOption").removeClass("tilesListOptionSelected")
     $(div).addClass("tilesListOptionSelected")
 }
@@ -41,14 +36,27 @@ function htmlForPossibilities(tileIds){
 
 function selectWorkingSide(side, div){
     working_side = side;
-    var tileIds = curr_probs[working_tile_id][side];
-    var html = "";
-    for(var tileId of tileIds){
-        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="" />'
-    }
-    $("#tilePickerMenu")[0].innerHTML = html;
-
+    renderTilePicker();
     $(".workingTile").removeClass("workingTileSelected")
     $(div).addClass("workingTileSelected")
     
+}
+
+function renderWorkingTile(){
+    $("#workingTileCenter")[0].innerHTML='<img src="../img/'+img_path+'/tile'+working_tile_id+'.png" style="width:100%; height: 100%;" />'
+    
+    $("#workingTileRight")[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["right"])
+    $("#workingTileLeft" )[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["left" ])
+    $("#workingTileUp"   )[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["up"   ])
+    $("#workingTileDown" )[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["down" ])
+}
+
+function renderTilePicker(){
+    var tileIds = curr_probs[working_tile_id][working_side];
+    var html = "";
+    for(var tileId of tileIds){
+        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 0 3" />'
+    }
+    $("#tilePickerMenu")[0].innerHTML = html;
+
 }
