@@ -17,7 +17,7 @@ populateTilesList();
 
 
 
-//Choose working tileset onclick
+//Choose working tile onclick
 function chooseWorkingTile(tileId, div){
     working_tile_id=tileId;
     renderWorkingTile();
@@ -26,14 +26,7 @@ function chooseWorkingTile(tileId, div){
     $(div).addClass("tilesListOptionSelected")
 }
 
-function htmlForPossibilities(tileIds){
-    var html =""
-    for(var tileId of tileIds){
-        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="" />'
-    }
-    return html
-}
-
+//Choose working side onclick
 function selectWorkingSide(side, div){
     working_side = side;
     renderTilePicker();
@@ -42,6 +35,7 @@ function selectWorkingSide(side, div){
     
 }
 
+//Render
 function renderWorkingTile(){
     $("#workingTileCenter")[0].innerHTML='<img src="../img/'+img_path+'/tile'+working_tile_id+'.png" style="width:100%; height: 100%;" />'
     
@@ -50,13 +44,21 @@ function renderWorkingTile(){
     $("#workingTileUp"   )[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["up"   ])
     $("#workingTileDown" )[0].innerHTML=htmlForPossibilities(curr_probs[working_tile_id]["down" ])
 }
+function htmlForPossibilities(tileIds){
+    var html =""
+    for(var tileId of tileIds){
+        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="" />'
+    }
+    return html
+}
 
 function renderTilePicker(){
     var tileIds = curr_probs[working_tile_id][working_side];
     var html = "";
     for(var tileId of tileIds){
-        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 0 3" />'
+        html+='<img src="../img/'+img_path+'/tile'+tileId+'.png" style="float:left; width:20%; margin: 3 3" />'
     }
+    html+='<img src="./tileAdd.png" style="float:left; width:20%; margin: 3 3" />'
     $("#tilePickerMenu")[0].innerHTML = html;
 
 }
