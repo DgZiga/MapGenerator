@@ -70,7 +70,7 @@ function dumb_algorithm(fixed_end_coords = undefined){
         }
 
         //console.log("picked "+dir_name[dir]+" direction")
-        var variable_len=randomInt(3);
+        var variable_len=randomInt(3)*1+1*1;
         for(var i =0 ; i<variable_len; i++){
             out = out.concat(new Coord(curr_x, curr_y))
             curr_x += walk_mod[dir].x;
@@ -81,7 +81,7 @@ function dumb_algorithm(fixed_end_coords = undefined){
             if(curr_y >= WFC.OUTPUT_H){ curr_y = WFC.OUTPUT_H-1;}
 
             if(curr_x == end_coords.x && curr_y == end_coords.y){
-                continue;
+                break;
             }
         }
     }
