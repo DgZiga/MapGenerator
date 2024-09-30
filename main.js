@@ -34,6 +34,17 @@ function set_debug(debug){
     }
 }
 
+function paintAllOnes(){
+    for(var i=0; i<WFC.OUTPUT_W * WFCS_ROWS_NO; i++){     
+        for(var j=0; j<WFC.OUTPUT_H * WFCS_COLS_NO; j++){ 
+            if(count_bits(mainWfc.output_probs[i][j])==1){
+                mainWfc.output[i][j] = bitmap_to_tile_ids(mainWfc.output_probs[i][j])[0]
+            }
+        }
+    }
+    renderOutput(mainWfc);
+}
+
 function start(){
     for(var wfc of wfcs){
         runAndRenderWfc(wfc)
