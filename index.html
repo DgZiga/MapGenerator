@@ -16,7 +16,7 @@
         debug: <input type="checkbox" onchange="set_debug(this)">
         <button onclick="start()" type="button">Start</button>
         <button onclick="reset()" type="button">Reset</button>
-        <button onclick="mainWfc.init(); randomize_walkable_coords(); paint_walkables(mainWfc)" type="button">Set Walkable</button><br />
+        <button onclick="mainWfc.init(); randomize_walkable_coords(mainWfc); paint_walkables(mainWfc)" type="button">Set Walkable</button><br />
         <div id="container" style="padding-left: 16px; padding-top: 16px; position:relative">
         </div>
         <script src="main.js"></script>

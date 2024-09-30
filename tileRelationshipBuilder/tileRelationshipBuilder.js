@@ -1,5 +1,5 @@
 
-var curr_probs = structuredClone(EMPTY_WIP_PROBS);
+var curr_probs = structuredClone(CUSTOM_PROBS);
 var img_path = "quintoStratoRed"
 
 var working_tile_id;

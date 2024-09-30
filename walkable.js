@@ -5,6 +5,11 @@ var non_walkable_superpos = Object.keys(CUSTOM_PROBS).filter(e=>{
         return e2==e
     }) == -1 ? true : false
 })
+var walkable_non_warp = CUSTOM_WALKABLE.filter(e=>{
+    return CUSTOM_WARP.findIndex(e2=>{
+        return e2==e
+    }) == -1 ? true : false
+})
 
 
 function paint_walkables(wfc) {
