@@ -17,13 +17,25 @@ function paint_walkables(wfc) {
         for(var j=0; j<WFC.OUTPUT_H; j++){
             var isTileWalkable = walkables_coords.findIndex(e=>{return e.x===i && e.y===j}) == -1 ? false : true;
             if(!isTileWalkable){
-                wfc.set_superposition(i, j, non_walkable_superpos)
+                wfc.set_superposition_no_recalc(i, j, non_walkable_superpos)
             }
         }
     }
     for(coords of walkables_coords){
-        wfc.set_superposition(coords.x,coords.y,walkable_non_warp)
+        wfc.set_superposition_no_recalc(coords.x,coords.y,walkable_non_warp)
     }
+    wfc.start_recalc_prob(0,0)
+
+    
+    var lowest_entropy_coord = wfc.find_lowest_entropy_cell()
+    var lex = lowest_entropy_coord[0]
+    var ley = lowest_entropy_coord[1]
+    if(wfc.output_probs[lex][ley] === 0n && wfc.output[lex][ley] === -1){
+        console.error("Collision found at "+lex+", "+ley)
+    } else {
+        console.log("done randomizing coords")
+    }
+
     renderOutput(wfc);
 }
 
@@ -35,15 +47,6 @@ function randomize_walkable_coords(wfc){
         walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
     }
     
-    var lowest_entropy_coord = wfc.find_lowest_entropy_cell()
-    var lex = lowest_entropy_coord[0]
-    var ley = lowest_entropy_coord[1]
-    if(wfc.output_probs[lex][ley] === 0n && wfc.output_probs[lex][ley] === -1){
-        console.err("Collision found at "+lex+", "+ley)
-    }
-
-
-    console.log("done randomizing coords")
 }
 
 

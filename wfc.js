@@ -21,7 +21,7 @@ class WFC {
     static OUTPUT_W = 40;
     static OUTPUT_H = 40;
     debug = false;
-    setDebug(checkbox){this.debug=$(checkbox)[0].checked}
+    setDebug(checkbox){this.debug=$(checkbox)[0].checked; renderOutput(this)}
     output = new Array();       //2d array of output tiles. -1 indicates superposition
     output_probs = new Array(); //this.output_probs is a 2d array of bigints: first two indexes are position (x/y), each position contains a bigint which is to be read as a bitmap.
     prob_calced_ctr = new Array();
@@ -154,10 +154,15 @@ class WFC {
     }
 
     set_superposition(x, y, superpos_array){
-        var superpos = tile_ids_to_bitmap(superpos_array);
-        this.output_probs[x][y] = superpos;
+        this.set_superposition_no_recalc(x, y, superpos_array)
         this.start_recalc_prob(x, y)
     }
+
+    set_superposition_no_recalc(x, y, superpos_array){
+        var superpos = tile_ids_to_bitmap(superpos_array);
+        this.output_probs[x][y] = superpos;
+    }
+
     set_bm_superposition(x, y, superpos_bm){
         this.output_probs[x][y] = superpos_bm;
     }
