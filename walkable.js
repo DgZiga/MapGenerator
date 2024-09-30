@@ -17,18 +17,28 @@ function paint_walkables(wfc) {
         }
     }
     for(coords of walkables_coords){
-        wfc.set_superposition(coords.x,coords.y,CUSTOM_WALKABLE)
+        wfc.set_superposition(coords.x,coords.y,walkable_non_warp)
     }
     renderOutput(wfc);
 }
 
-function randomize_walkable_coords(){
-    //var new_coords = dumb_algorithm();
+function randomize_walkable_coords(wfc){
+    console.log("start randomizing coords")
     var fixed_end_coords = random_edge_coords();
     var paths_no =2;
     for(var i=0; i<paths_no; i++){
         walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
     }
+    
+    var lowest_entropy_coord = wfc.find_lowest_entropy_cell()
+    var lex = lowest_entropy_coord[0]
+    var ley = lowest_entropy_coord[1]
+    if(wfc.output_probs[lex][ley] === 0n && wfc.output_probs[lex][ley] === -1){
+        console.err("Collision found at "+lex+", "+ley)
+    }
+
+
+    console.log("done randomizing coords")
 }
 
 
@@ -44,7 +54,6 @@ function dumb_algorithm(fixed_end_coords = undefined){
     var out = []
     var start_coords = random_edge_coords()
     var end_coords   = fixed_end_coords === undefined ? random_edge_coords() : fixed_end_coords
-    console.log("Running dumb alg on "+start_coords+"; "+end_coords)
     var curr_x = start_coords.x;
     var curr_y = start_coords.y;
     //PIck a random direction and run towards it for variable_len times. Repeat until on target square 
