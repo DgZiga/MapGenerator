@@ -103,15 +103,7 @@ while tileId<tileIdCounter:#for each tile id
 
     tileId+=1
 
-#print(map)
-#print()
-#print()
-#print()
-print(json.dumps(tileRelationships, default=lambda x: x.__dict__))
-#print()
-#print()
-#print()
-#print()
+#print(json.dumps(tileRelationships, default=lambda x: x.__dict__))
 
 #tileRelationships dict now may contain multiple entries of the same tile for each id, the last step is to convert them into bitmaps
 
@@ -120,7 +112,7 @@ iterator = range(tileIdCounter+1)
 for i in iterator:
     powersOf2[i] = int(math.pow(2,i))
     
-print(json.dumps(powersOf2, default=lambda x: x.__dict__))
+#print(json.dumps(powersOf2, default=lambda x: x.__dict__))
 
 # doesnt work: python doesnt know how to handle big numbers, although it says it does:
 #  >>> 39969865730104624 + int(math.pow(2,62))
@@ -168,9 +160,6 @@ while tileId<tileIdCounter: #for each tile id
     rel.right = univoci(rel.right)
     tileId+=1
 
-print()
-print()
-print()
 print(json.dumps(tileRelationships, default=lambda x: x.__dict__))
 
 """
