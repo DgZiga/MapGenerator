@@ -39,7 +39,7 @@ function paint_walkables(wfc) {
     renderOutput(wfc);
 }
 
-function randomize_walkable_coords(wfc){
+function randomize_walkable_coords(){
     console.log("start randomizing coords")
     var fixed_end_coords = random_edge_coords();
     var paths_no =2;

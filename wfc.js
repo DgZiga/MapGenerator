@@ -18,8 +18,8 @@ class WFC {
     static img_path = "quintoStratoRed"
 
 
-    static OUTPUT_W = 40;
-    static OUTPUT_H = 40;
+    static OUTPUT_W = 60;
+    static OUTPUT_H = 60;
     debug = false;
     setDebug(checkbox){this.debug=$(checkbox)[0].checked; renderOutput(this)}
     output = new Array();       //2d array of output tiles. -1 indicates superposition
