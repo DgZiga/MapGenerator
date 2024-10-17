@@ -1,3 +1,8 @@
 .selectedBrush{
     border:1px solid red;
 }
+
+#paintCmdDiv{
+    padding: 5px;
+    border: 3px solid green;
+}
