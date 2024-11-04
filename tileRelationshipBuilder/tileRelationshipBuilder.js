@@ -1,6 +1,6 @@
 
-var curr_probs = structuredClone(CUSTOM_PROBS);
-var img_path = "quintoStratoRed"
+var curr_probs = WFC.s_input_probs
+var img_path = WFC.img_path
 
 var working_tile_id;
 var working_side ='up';
