@@ -77,9 +77,11 @@ function printCurrProbs(){
     console.log(JSON.stringify(curr_probs))
 }
 const EMPTY_PROBS = {"up":[],"down":[],"left":[],"right":[]}
-//Add new tile ids prob
 function newProbForTileId(tileId){
-    curr_probs [tileId] = EMPTY_PROBS;
+    curr_probs[tileId] = EMPTY_PROBS;
+}
+function copyProbs(tileIdFrom, tileIdTo){
+    curr_probs[tileIdTo] = structuredClone(curr_probs[tileIdFrom]);
 }
 
 
