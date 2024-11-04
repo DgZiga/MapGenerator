@@ -76,6 +76,11 @@ function addTileToPossibility(sourceTile, tileIdToAdd, dir){
 function printCurrProbs(){
     console.log(JSON.stringify(curr_probs))
 }
+const EMPTY_PROBS = {"up":[],"down":[],"left":[],"right":[]}
+//Add new tile ids prob
+function newProbForTileId(tileId){
+    curr_probs [tileId] = EMPTY_PROBS;
+}
 
 
 
