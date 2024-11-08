@@ -1,12 +1,12 @@
 var walkables_coords = []
 
-var non_walkable_superpos = Object.keys(CUSTOM_PROBS).filter(e=>{
-    return CUSTOM_WALKABLE.findIndex(e2=>{
+var non_walkable_superpos = Object.keys(WFC.s_input_probs).filter(e=>{
+    return WFC.s_input_walkable.findIndex(e2=>{
         return e2==e
     }) == -1 ? true : false
 })
-var walkable_non_warp = CUSTOM_WALKABLE.filter(e=>{
-    return CUSTOM_WARP.findIndex(e2=>{
+var walkable_non_warp = WFC.s_input_walkable.filter(e=>{
+    return WFC.s_input_warps.findIndex(e2=>{
         return e2==e
     }) == -1 ? true : false
 })

@@ -9,7 +9,7 @@ var working_side ='up';
 function populateTilesList(){
     var html ="";
     for(var i=0; i<Object.keys(curr_probs).length; i++){
-        html += '<div class="tilesListOption" onclick="chooseWorkingTile('+i+',this)" ><img src="../img/'+img_path+'/tile'+i+'.png"" /></div>'
+        html += '<div class="tilesListOption" onclick="chooseWorkingTile('+i+',this)" ><img src="../img/'+img_path+'/tile'+i+'.png"" /><span>'+i+'</span></div>'
     }
     $("#tileListMenu")[0].innerHTML=html;
 }

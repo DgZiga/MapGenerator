@@ -12,6 +12,8 @@
      */
 class WFC {
     static s_input_probs = structuredClone(AVON_SOUP_PROBS);
+    static s_input_walkable = AVON_SOUP_WALKABLE;
+    static s_input_warps = AVON_SOUP_WARP;
     static img_path = "avonsSoup"
     input_probs = WFC.s_input_probs; //todo: deprcate
 
@@ -34,7 +36,7 @@ class WFC {
     //all possibilities accounted
     probs_tmpl = (1n << BigInt(Object.keys(this.input_probs).length))-1n
 
-    errorThreshold = 50;
+    errorThreshold = 1;
 
     constructor() {
         //transform this.input_probs from list of tileids to bigintegers
@@ -212,12 +214,12 @@ class WFC {
                 console.log("Error occourred, restarting")
                 console.log(error);
                 errorCnt++;
-                this.output       = structuredClone(this.initial_output);
-                this.output_probs = structuredClone(this.intial_output_probs);
                 if(this.debug || errorCnt >= this.errorThreshold){
                     break;
                 }
                 //restart
+                this.output       = structuredClone(this.initial_output);
+                this.output_probs = structuredClone(this.intial_output_probs);
                 arr = this.find_lowest_entropy_cell();
             }
             k++
