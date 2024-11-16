@@ -17,7 +17,7 @@ function paint_walkables(wfc) {
         for(var j=0; j<WFC.OUTPUT_H; j++){
             var isTileWalkable = walkables_coords.findIndex(e=>{return e.x===i && e.y===j}) == -1 ? false : true;
             if(!isTileWalkable){
-                wfc.set_superposition_no_recalc(i, j, non_walkable_superpos)
+                //wfc.set_superposition_no_recalc(i, j, non_walkable_superpos) tilesets outside walkable path can also be walkable. This somehow fixes issues for my tileset. More research needed
             }
         }
     }
