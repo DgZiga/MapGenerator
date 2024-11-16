@@ -22,7 +22,7 @@ function paint_walkables(wfc) {
         }
     }
     for(coords of walkables_coords){
-        console.log("Setting walkable "+coords.x + ", " +coords.y);
+        //console.log("Setting walkable "+coords.x + ", " +coords.y);
         wfc.set_superposition_no_recalc(coords.x,coords.y,walkable_non_warp)
     }
     

@@ -98,9 +98,24 @@ function renderOutput(wfc){
         for(var j=0; j<WFC.OUTPUT_H; j++){
             html += '<img src="img/'+WFC.img_path+'/tile'+wfc.output[j][i]+'.png" />'
             if(wfc.debug && wfc.output[j][i] == -1){
-                html+='<div style="text-align:center; position: absolute; top:'+i*16+'px; left: '+j*16+'; width: 16px; height: 16px;">'+count_bits(wfc.output_probs[j][i])+'</div>'
+                html+='<div style="text-align:center; position: absolute; top:'+i*16+'px; left: '+j*16+'; width: 16px; height: 16px;" onmouseenter="showTileDetails('+j+','+i+')" >'+count_bits(wfc.output_probs[j][i])+'</div>'
             }
         }
     }
     $("#wfcResultContainer"+wfc.id)[0].innerHTML=html
+}
+
+$("body")[0].onmousemove = function(e){$("#debugDetailsContainer")[0].style.left=e.clientX; $("#debugDetailsContainer")[0].style.top=e.clientY}
+
+function showTileDetails(x, y){
+    var wfc = wfcs[0] //todo rewrite
+    var tiles = bitmap_to_tile_ids(wfc.output_probs[x][y])
+    var html = ""
+    for(var tile of tiles){
+        html += '<img src="img/'+WFC.img_path+'/tile'+tile+'.png"" />'
+    }
+    
+    //console.log(tiles)
+    $("#debugDetailsContainer")[0].innerHTML = html;
+    $("#debugDetailsContainer")[0].style.display = "block"
 }
