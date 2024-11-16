@@ -22,8 +22,38 @@ function paint_walkables(wfc) {
         }
     }
     for(coords of walkables_coords){
+        console.log("Setting walkable "+coords.x + ", " +coords.y);
         wfc.set_superposition_no_recalc(coords.x,coords.y,walkable_non_warp)
     }
+    
+    // Print graph
+    var a = function(){
+        var m = new Array();
+        var printstr = "";
+        for(var i=0; i<WFC.OUTPUT_W; i++){
+            m[i] = new Array();
+            for(var j=0; j<WFC.OUTPUT_H; j++){
+                //horrible but idc
+                var isWalkable = false
+                for(coords of walkables_coords){
+                    if(j == coords.x && i == coords.y){
+                        isWalkable=true;
+                    }
+                }
+                if(isWalkable){
+                    printstr+="X "
+                } else {
+                    printstr+=". "
+                }
+            }
+            printstr+="\n"
+        }
+        console.log(printstr)
+    }
+    if(wfc.debug){
+        a();
+    }
+
     wfc.start_recalc_prob(0,0)
 
     
