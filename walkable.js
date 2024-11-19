@@ -72,7 +72,7 @@ function paint_walkables(wfc) {
 function randomize_walkable_coords(){
     console.log("start randomizing coords")
     var fixed_end_coords = random_edge_coords();
-    var paths_no =2;
+    var paths_no = 1;
     for(var i=0; i<paths_no; i++){
         walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
     }
@@ -96,7 +96,15 @@ function dumb_algorithm(fixed_end_coords = undefined){
     var curr_y = start_coords.y;
     //PIck a random direction and run towards it for variable_len times. Repeat until on target square 
     while(curr_x != end_coords.x || curr_y != end_coords.y){
-        out = out.concat(new Coord(curr_x, curr_y))
+        out = out.concat(new Coord(curr_x-1, curr_y-1))
+        out = out.concat(new Coord(curr_x  , curr_y-1))
+        out = out.concat(new Coord(curr_x+1, curr_y-1))
+        out = out.concat(new Coord(curr_x-1, curr_y  ))
+        out = out.concat(new Coord(curr_x  , curr_y  ))
+        out = out.concat(new Coord(curr_x+1, curr_y  ))
+        out = out.concat(new Coord(curr_x-1, curr_y+1))
+        out = out.concat(new Coord(curr_x  , curr_y+1))
+        out = out.concat(new Coord(curr_x+1, curr_y+1))
         var dir = shortest_dir(new Coord(curr_x, curr_y), end_coords);//randomInt(4); //value between 0-3. 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
         if(randomInt(5) == -1){ // with 1/5 chance just pick a random direction
             var dir = randomInt(4); //value between 0-3. 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
@@ -118,6 +126,10 @@ function dumb_algorithm(fixed_end_coords = undefined){
             }
         }
     }
+
+    out = out.filter((value, index, array) => array.indexOf(value) === index); //remove duplicates
+    out = out.filter((value, index, array) => value.x >= 0 && value.y >= 0); //remove invalid coords
+
     return out
 }
 
