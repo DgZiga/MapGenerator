@@ -130,10 +130,18 @@ class WFC {
         if(u.length == 0){u_allowed_tiles = this.probs_tmpl}
         if(d.length == 0){d_allowed_tiles = this.probs_tmpl}
 
-        this.output_probs[x][y] = this.output_probs[x][y] & l_allowed_tiles;
-        this.output_probs[x][y] = this.output_probs[x][y] & r_allowed_tiles;
-        this.output_probs[x][y] = this.output_probs[x][y] & u_allowed_tiles;
-        this.output_probs[x][y] = this.output_probs[x][y] & d_allowed_tiles;
+        var probs = this.output_probs[x][y];
+        probs = probs & l_allowed_tiles;
+        probs = probs & r_allowed_tiles;
+        probs = probs & u_allowed_tiles;
+        probs = probs & d_allowed_tiles;
+        
+        
+        if(probs === 0n){
+            debugger;
+            throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities (was '+this.output_probs[x][y]+'n)');
+        }
+        this.output_probs[x][y]=probs;
 
         if(count_bits(this.output_probs[x][y]) != count_bits(this.probs_tmpl)){
             this.recalc_prob(x-1, y  )
@@ -171,6 +179,7 @@ class WFC {
     }
 
     observe(x, y, forcedVal=undefined){
+        //console.log('obesrving '+x+', '+y)
         var probs = this.output_probs[x][y]
         if(probs === 0n){
             throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities');
