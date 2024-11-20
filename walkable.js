@@ -29,8 +29,15 @@ function paint_walkables(wfc) {
     // Print graph
     var showDebugGraph = function(){
         var m = new Array();
-        var printstr = "";
+        var printstr = "   ";
+        
+        for(var i=0; i<WFC.OUTPUT_W; i++){//header
+            printstr+=(""+i).padStart(2, '0')+" "
+        }
+        printstr+="\n"
+        
         for(var i=0; i<WFC.OUTPUT_W; i++){
+            printstr+=(""+i).padStart(2, '0')+" "
             m[i] = new Array();
             for(var j=0; j<WFC.OUTPUT_H; j++){
                 //horrible but idc
@@ -41,9 +48,9 @@ function paint_walkables(wfc) {
                     }
                 }
                 if(isWalkable){
-                    printstr+="X "
+                    printstr+="X  "
                 } else {
-                    printstr+=". "
+                    printstr+=".  "
                 }
             }
             printstr+="\n"
