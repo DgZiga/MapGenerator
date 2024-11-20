@@ -52,7 +52,7 @@ function paint_walkables(wfc) {
     }
     showDebugGraph(); //comment this out if you want
 
-    wfc.start_recalc_prob(0,0)
+    wfc.start_recalc_prob(fixed_end_coords.x, fixed_end_coords.y)
 
     
     var lowest_entropy_coord = wfc.find_lowest_entropy_cell()
@@ -68,9 +68,10 @@ function paint_walkables(wfc) {
     renderOutput(wfc);
 }
 
+var fixed_end_coords = new Coord(0,0)
 function randomize_walkable_coords(){
     console.log("start randomizing coords")
-    var fixed_end_coords = random_edge_coords();
+    fixed_end_coords = random_edge_coords();
     var paths_no = 5;
     for(var i=0; i<paths_no; i++){
         walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
