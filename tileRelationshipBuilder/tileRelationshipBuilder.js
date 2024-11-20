@@ -65,13 +65,16 @@ function selectWorkingSide(side, div){
 
 
 //curr_probs handling
-function removeTileFromPossibility(sourceTile, tileIdToRemove, dir){
+function removeTileFromPossibility(sourceTile, tileIdToRemove, dir, mirror=true){
     var working_probs = curr_probs[sourceTile][dir]
     var i = working_probs.indexOf(tileIdToRemove)
     if (i > -1){
         working_probs.splice(i, 1)
     } else {
         throw 'trying to remove inexisting tile '+tileIdToRemove+' from possibility ['+sourceTile+']['+dir+']'
+    }
+    if(mirror){
+        removeTileFromPossibility(sourceTile, sourceTile, getOppositeDir(dir), false)
     }
 }
 function addTileToPossibility(sourceTile, tileIdToAdd, dir, mirror=true){
