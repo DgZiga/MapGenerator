@@ -12,9 +12,14 @@ var walkable_non_warp = WFC.s_input_walkable.filter(e=>{
 })
 
 var paintedCoords = new Array()
+var semipaintedCoords = new Array()
 function setPaintedCoords(coords){
     paintedCoords=paintedCoords.concat(coords)
 }
+function setSemiPaintedCoords(coords){
+    semipaintedCoords=semipaintedCoords.concat(coords)
+}
+
 async function paint_walkables(wfc) {
     for(var i=0; i<WFC.OUTPUT_W; i++){
         for(var j=0; j<WFC.OUTPUT_H; j++){
@@ -24,7 +29,7 @@ async function paint_walkables(wfc) {
     const brushSize = 4;
     for(var vector of walkables_coords){
         //console.log("Setting walkable "+coords.x + ", " +coords.y);
-        vector.rasterize(wfc.output_probs, new Brush(tile_ids_to_bitmap(walkable_non_warp), brushSize))
+        vector.rasterize(wfc.output_probs, new Brush(tile_ids_to_bitmap(walkable_non_warp), brushSize, new BrushSoftness(wfc.probs_tmpl, 1)))
     }
     
     // Print graph
@@ -59,22 +64,9 @@ async function paint_walkables(wfc) {
         console.log(printstr)
     }
     showDebugGraph(); //comment this out if you want
-    
-    var delay = function(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    //debug stuff
-    wfc.debug=true
-    renderOutput(wfc);
-    await delay(1000)
-    debugger;
 
     wfc.start_recalc_prob(fixed_end_coords.x, fixed_end_coords.y)
 
-    renderOutput(wfc);
-    await delay(1000)
-    debugger;
-    
     var lowest_entropy_coord = wfc.find_lowest_entropy_cell()
     var lex = lowest_entropy_coord[0]
     var ley = lowest_entropy_coord[1]

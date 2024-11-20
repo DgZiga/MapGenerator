@@ -31,6 +31,24 @@ class Brush{
         if(endX>=matrixW){endX = matrixW-1}
         if(endY>=matrixY){endY = matrixY-1}
 
+        //Softness
+        var softStartX = startX - this.brushSoftness.width
+        var softStartY = startY - this.brushSoftness.width
+        var softEndX   = endX   + this.brushSoftness.width
+        var softEndY   = endY   + this.brushSoftness.width
+        if(softStartX<0       ){softStartX = 0}
+        if(softStartY<0       ){softStartY = 0}
+        if(softEndX  >=matrixW){softEndX   = matrixW-1}
+        if(softEndY  >=matrixY){softEndY   = matrixY-1}
+        for(var i=softStartX; i<=softEndX; i++){
+            for(var j=softStartY; j<=softEndY; j++){
+                if(matrix[i][j] != this.superposition){
+                    matrix[i][j] = this.brushSoftness.superposition
+                    setSemiPaintedCoords(new Coord(i, j))
+                }
+            }
+        }
+
         for(var i=startX; i<=endX; i++){
             for(var j=startY; j<=endY; j++){
                 matrix[i][j] = this.superposition
@@ -38,7 +56,8 @@ class Brush{
             }
         }
 
-        //TODO: implement softness :)
+
+
     }
 }
 class BrushSoftness{
