@@ -20,6 +20,16 @@ function populateAddTilesList(){
     }
     $("#tileListMenu")[0].innerHTML=html;
 }
+//Init: Render commands menu
+function renderCommandMenu(){
+    var html =`
+        <button type="button" onclick="printCurrProbs()">Print</button>
+        <button type="button" onclick="newProbForTileId(prompt('insert tile id:'))">New prob for tile</button>
+        <button type="button" onclick="copyProbs(prompt('copy probs from:'),prompt('copy probs to:'))">Copy probs</button>
+    `
+    $("#commandsMenu")[0].innerHTML = html;
+}
+
 populateTilesList();
 renderCommandMenu()
 
@@ -64,13 +74,16 @@ function removeTileFromPossibility(sourceTile, tileIdToRemove, dir){
         throw 'trying to remove inexisting tile '+tileIdToRemove+' from possibility ['+sourceTile+']['+dir+']'
     }
 }
-function addTileToPossibility(sourceTile, tileIdToAdd, dir){
+function addTileToPossibility(sourceTile, tileIdToAdd, dir, mirror=true){
     var working_probs = curr_probs[sourceTile][dir]
     var i = working_probs.indexOf(tileIdToAdd)
     if (i > -1){
         return;
     } else {
         curr_probs[sourceTile][dir] = working_probs.concat(tileIdToAdd)
+    }
+    if(mirror){
+        addTileToPossibility(tileIdToAdd, sourceTile, getOppositeDir(dir), false)
     }
 }
 function printCurrProbs(){
@@ -82,6 +95,13 @@ function newProbForTileId(tileId){
 }
 function copyProbs(tileIdFrom, tileIdTo){
     curr_probs[tileIdTo] = structuredClone(curr_probs[tileIdFrom]);
+}
+function getOppositeDir(dir){
+    if(dir==='up'   ){return 'down' ;}
+    if(dir==='down' ){return 'up'   ;}
+    if(dir==='left' ){return 'right';}
+    if(dir==='right'){return 'left' ;}
+    throw 'unknown dir: '+dir
 }
 
 
@@ -134,10 +154,4 @@ function exitAddTileSubmenu(){
 function addPossibility(tileId){
     addTileToPossibility(working_tile_id, tileId, working_side);
     renderAll();
-}
-
-//Render commands menu
-function renderCommandMenu(){
-    var html ='<button type="button" onclick="printCurrProbs()">Print</button>'
-    $("#commandsMenu")[0].innerHTML = html;
 }
