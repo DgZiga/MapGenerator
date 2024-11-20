@@ -138,8 +138,8 @@ class WFC {
         
         
         if(probs === 0n){
-            debugger;
-            throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities (was '+this.output_probs[x][y]+'n)');
+            //debugger;
+            //throw new Error('Collision! Tile '+x+', '+y+' has 0 possibilities (was '+this.output_probs[x][y]+'n)');
         }
         this.output_probs[x][y]=probs;
 
