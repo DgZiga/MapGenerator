@@ -17,7 +17,7 @@ class Brush{
 
     paint(matrix, x, y){
         const matrixW = matrix.length
-        const matrixY = matrix[0].length
+        const matrixH = matrix[0].length
 
         //draw a square
         var extraWidth = this.width-1 
@@ -29,7 +29,7 @@ class Brush{
         if(startX<0){startX = 0}
         if(startY<0){startY = 0}
         if(endX>=matrixW){endX = matrixW-1}
-        if(endY>=matrixY){endY = matrixY-1}
+        if(endY>=matrixH){endY = matrixH-1}
 
         //Softness
         var softStartX = startX - this.brushSoftness.width
@@ -39,7 +39,7 @@ class Brush{
         if(softStartX<0       ){softStartX = 0}
         if(softStartY<0       ){softStartY = 0}
         if(softEndX  >=matrixW){softEndX   = matrixW-1}
-        if(softEndY  >=matrixY){softEndY   = matrixY-1}
+        if(softEndY  >=matrixH){softEndY   = matrixH-1}
         for(var i=softStartX; i<=softEndX; i++){
             for(var j=softStartY; j<=softEndY; j++){
                 if(matrix[i][j] != this.superposition){
@@ -77,7 +77,7 @@ class Vector{
 
     rasterize(matrix, brush){
         const matrixW = matrix.length
-        const matrixY = matrix[0].length
+        const matrixH = matrix[0].length
         //Bresenham's line algorithm taken from SO: https://stackoverflow.com/questions/4672279/bresenham-algorithm-in-javascript
         var x0 = this.from.x
         var y0 = this.from.y
@@ -92,7 +92,7 @@ class Vector{
         while (true) {
             //scale x0 y0 to matrix coords
             var mx = Math.ceil(x0*matrixW/100)-1
-            var my = Math.ceil(y0*matrixY/100)-1
+            var my = Math.ceil(y0*matrixH/100)-1
             brush.paint(matrix, mx, my)
 
             if (x0 === x1 && y0 === y1) break;    
@@ -112,17 +112,52 @@ class Ellipse{
         this.hRad    = hRad
         this.vRad    = vRad
     }
-    //Standard Ellipse equation: (x-cX)^2 / hRad  +  (y-cY)^2 / vRad
-    //For a point x,y if the above equation is =1 then the point is on the ellipse, <1 is inside it, >1 is outside
+
+    //rasterize_approx(matrix, brush){
     rasterize(matrix, brush){
         const matrixW = matrix.length
-        const matrixY = matrix[0].length
+        const matrixH = matrix[0].length
+
+        // ChatGPT approximation for ellipse fill
+        const h = Math.round(this.centerX * matrixW / 100);
+        const k = Math.round(this.centerY * matrixH / 100);
+        const a = Math.round(this.hRad    * matrixW / 100);
+        const b = Math.round(this.vRad    * matrixH / 100);
+
+        // Iterate over all rows (y-values) in the bounding box of the ellipse
+        for (let y = k - b; y <= k + b; y++) {
+            if (y < 0 || y >= matrixH) continue; // Skip rows outside the grid
+
+            // Compute the x-range for this row
+            const yOffset = (y - k) ** 2 / (b ** 2);
+            if (yOffset > 1) continue; // Outside the ellipse
+
+            const xRange = Math.sqrt((1 - yOffset) * a ** 2);
+            const xMin = Math.max(0, Math.round(h - xRange));
+            const xMax = Math.min(matrixW - 1, Math.round(h + xRange));
+
+            // Fill all cells between xMin and xMax
+            for (let x = xMin; x <= xMax; x++) {
+                brush.paint(matrix, x, y);
+            }
+        }
+
+    }
+
+    //Standard Ellipse equation: (x-cX)^2 / hRad  +  (y-cY)^2 / vRad
+    //For a point x,y if the above equation is =1 then the point is on the ellipse, <1 is inside it, >1 is outside
+    //Precise implementation: allows to trace borders but is slower
+    rasterize_precise(matrix, brush){
+    //rasterize(matrix, brush){
+        const matrixW = matrix.length
+        const matrixH = matrix[0].length
 
         // Convert center and radius to grid coordinates
+        // thx ChatGPT
         const h = Math.round(this.centerX * matrixW / 100);
-        const k = Math.round(this.centerY * matrixY / 100);
+        const k = Math.round(this.centerY * matrixH / 100);
         const a = Math.round(this.hRad    * matrixW / 100);
-        const b = Math.round(this.vRad    * matrixY / 100);
+        const b = Math.round(this.vRad    * matrixH / 100);
     
         let x = 0;
         let y = b;
@@ -166,11 +201,6 @@ class Ellipse{
                 d2 += dx - dy + a * a;
             }
         }
-    /*
-        //scale x0 y0 to matrix coords
-        var mx = Math.ceil(x0*matrixW/100)-1
-        var my = Math.ceil(y0*matrixY/100)-1
-        brush.paint(matrix, mx, my)*/
     }
     
     plotFilledEllipsePoints(h, k, x, y, matrix, brush) {
