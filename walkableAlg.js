@@ -105,6 +105,83 @@ class Vector{
 }
 
 
+class Ellipse{
+    constructor(centerX, centerY, hRad, vRad){
+        this.centerX = centerX   
+        this.centerY = centerY   
+        this.hRad    = hRad
+        this.vRad    = vRad
+    }
+    //Standard Ellipse equation: (x-cX)^2 / hRad  +  (y-cY)^2 / vRad
+    //For a point x,y if the above equation is =1 then the point is on the ellipse, <1 is inside it, >1 is outside
+    rasterize(matrix, brush){
+        const matrixW = matrix.length
+        const matrixY = matrix[0].length
+
+        // Convert center and radius to grid coordinates
+        const h = Math.round(this.centerX * matrixW / 100);
+        const k = Math.round(this.centerY * matrixY / 100);
+        const a = Math.round(this.hRad    * matrixW / 100);
+        const b = Math.round(this.vRad    * matrixY / 100);
+    
+        let x = 0;
+        let y = b;
+    
+        // Decision parameter for region 1
+        let d1 = b * b - a * a * b + 0.25 * a * a;
+        let dx = 2 * b * b * x;
+        let dy = 2 * a * a * y;
+    
+        // Region 1: Slope < -1
+        while (dx < dy) {
+            this.plotFilledEllipsePoints(h, k, x, y, matrix, brush);
+            if (d1 < 0) {
+                x++;
+                dx += 2 * b * b;
+                d1 += dx + b * b;
+            } else {
+                x++;
+                y--;
+                dx += 2 * b * b;
+                dy -= 2 * a * a;
+                d1 += dx - dy + b * b;
+            }
+        }
+    
+        // Decision parameter for region 2
+        let d2 = b * b * (x + 0.5) ** 2 + a * a * (y - 1) ** 2 - a * a * b * b;
+    
+        // Region 2: Slope > -1
+        while (y >= 0) {
+            this.plotFilledEllipsePoints(h, k, x, y, matrix, brush);
+            if (d2 > 0) {
+                y--;
+                dy -= 2 * a * a;
+                d2 += a * a - dy;
+            } else {
+                y--;
+                x++;
+                dx += 2 * b * b;
+                dy -= 2 * a * a;
+                d2 += dx - dy + a * a;
+            }
+        }
+    /*
+        //scale x0 y0 to matrix coords
+        var mx = Math.ceil(x0*matrixW/100)-1
+        var my = Math.ceil(y0*matrixY/100)-1
+        brush.paint(matrix, mx, my)*/
+    }
+    
+    plotFilledEllipsePoints(h, k, x, y, matrix, brush) {
+        for (let i = -x; i <= x; i++) {
+            brush.paint(matrix, h + i, k + y)// Fill row for Quadrants 1 and 2
+            brush.paint(matrix, h + i, k - y)// Fill row for Quadrants 3 and 4
+        }
+    }
+}
+
+
 /* code from chatgpt for bezier curve 
 
 function rasterizeBezierCurve(gridWidth, gridHeight, points, steps = 100) {
