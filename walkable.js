@@ -26,7 +26,7 @@ async function paint_walkables(wfc) {
             wfc.set_superposition_no_recalc(i, j, non_walkable_superpos) //tilesets outside walkable path cannot be walkable. More research needed
         }
     }
-    const brushSize = 4;
+    const brushSize = Math.ceil(WFC.OUTPUT_W/20);
     for(var vector of walkables_coords){
         //console.log("Setting walkable "+coords.x + ", " +coords.y);
         vector.rasterize(wfc.output_probs, new Brush(tile_ids_to_bitmap(walkable_non_warp), brushSize, new BrushSoftness(wfc.probs_tmpl, 1)))
@@ -47,8 +47,8 @@ async function paint_walkables(wfc) {
             m[i] = new Array();
             for(var j=0; j<WFC.OUTPUT_H; j++){
                 //horrible but idc
-                var isWalkable = paintedCoords.findIndex(c=>{return c.x==i && c.y==j}) != -1
-                var isSemiWalkable = semipaintedCoords.findIndex(c=>{return c.x==i && c.y==j}) != -1
+                var isWalkable     = paintedCoords    .findIndex(c=>{return c.x==j && c.y==i}) != -1
+                var isSemiWalkable = semipaintedCoords.findIndex(c=>{return c.x==j && c.y==i}) != -1
                 
                 if(isWalkable){
                     printstr+="X"
@@ -81,12 +81,24 @@ async function paint_walkables(wfc) {
 }
 
 var fixed_end_coords = new Coord(0,0)
+const MAX_ROOMS_NO = 5
+const MIN_ROOMS_NO = 3
 function randomize_walkable_coords(){
     console.log("start randomizing coords")
     fixed_end_coords = random_edge_coords();
-    var paths_no = 5;
-    for(var i=0; i<paths_no; i++){
-        walkables_coords = walkables_coords.concat(dumb_algorithm(fixed_end_coords));
+    var roomsNo = randomInt(MAX_ROOMS_NO-MIN_ROOMS_NO)+MIN_ROOMS_NO;
+    var ellipseCoords = new Array();
+    for(var i=0; i<roomsNo;i++){
+        ellipseCoords[i] = get_random_coords()
+        walkables_coords = walkables_coords.concat(new Ellipse(ellipseCoords[i].x, ellipseCoords[i].y, randomInt(15)+1, randomInt(15)+1))
+    }
+
+    walkables_coords = walkables_coords.concat(new Vector(fixed_end_coords.x, fixed_end_coords.y, ellipseCoords[0].x, ellipseCoords[0].y)); //Link one room to the edge of the screen
+
+    for(var i=0; i<ellipseCoords.length-1; i++){
+        var from = ellipseCoords[i  ]
+        var to   = ellipseCoords[i+1]
+        walkables_coords = walkables_coords.concat(new Vector(from.x, from.y, to.x, to.y));
     }
     
     //scale x0 y0 to matrix coords
@@ -113,8 +125,12 @@ function dumb_algorithm(fixed_end_coords = undefined){
 }
 
 //returns Coord object with random coordinates in Vector space (1-100)
+function get_random_coords(){
+    return new Coord(randomInt(100)+1, randomInt(100)+1)
+}
+//returns Coord object with random coordinates in Vector space (1-100)
 function random_edge_coords(){
-    var random_coords = new Coord(randomInt(100)+1, randomInt(100)+1)
+    var random_coords = get_random_coords()
     var which_fixed = randomInt(2); //0 = x coord is fixed, 1 = y coord is fixed
     var min_or_max  = randomInt(2); //0 = fixed coord will be set to min, 1 = fixed coord will be set to max
 
