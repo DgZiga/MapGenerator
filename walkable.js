@@ -47,17 +47,17 @@ async function paint_walkables(wfc) {
             m[i] = new Array();
             for(var j=0; j<WFC.OUTPUT_H; j++){
                 //horrible but idc
-                var isWalkable = false
-                for(coords of paintedCoords){
-                    if(j == coords.x && i == coords.y){
-                        isWalkable=true;
-                    }
-                }
+                var isWalkable = paintedCoords.findIndex(c=>{return c.x==i && c.y==j}) != -1
+                var isSemiWalkable = semipaintedCoords.findIndex(c=>{return c.x==i && c.y==j}) != -1
+                
                 if(isWalkable){
-                    printstr+="X  "
+                    printstr+="X"
+                } else if(isSemiWalkable){
+                    printstr+="O"
                 } else {
-                    printstr+=".  "
+                    printstr+="."
                 }
+                printstr+="  "
             }
             printstr+="\n"
         }
