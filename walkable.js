@@ -29,7 +29,7 @@ async function paint_walkables(wfc) {
     const brushSize = Math.ceil(WFC.OUTPUT_W/20);
     for(var vector of walkables_coords){
         //console.log("Setting walkable "+coords.x + ", " +coords.y);
-        vector.rasterize(wfc.output_probs, new Brush(tile_ids_to_bitmap(walkable_non_warp), brushSize, new BrushSoftness(wfc.probs_tmpl, 1)))
+        vector.rasterize(wfc.output_probs, new Brush(tile_ids_to_bitmap(walkable_non_warp), brushSize, 1))
     }
     
     // Print graph

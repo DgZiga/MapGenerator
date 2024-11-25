@@ -9,7 +9,7 @@
  * - an optional softness option, which will smooth the edges
  */
 class Brush{
-    constructor(superposition, width, brushSoftness=new BrushSoftness(0,0)){
+    constructor(superposition, width, brushSoftness=0){
         this.superposition= superposition
         this.width        = width
         this.brushSoftness= brushSoftness
@@ -32,20 +32,18 @@ class Brush{
         if(endY>=matrixH){endY = matrixH-1}
 
         //Softness
-        var softStartX = startX - this.brushSoftness.width
-        var softStartY = startY - this.brushSoftness.width
-        var softEndX   = endX   + this.brushSoftness.width
-        var softEndY   = endY   + this.brushSoftness.width
+        var softStartX = startX - this.brushSoftness
+        var softStartY = startY - this.brushSoftness
+        var softEndX   = endX   + this.brushSoftness
+        var softEndY   = endY   + this.brushSoftness
         if(softStartX<0       ){softStartX = 0}
         if(softStartY<0       ){softStartY = 0}
         if(softEndX  >=matrixW){softEndX   = matrixW-1}
         if(softEndY  >=matrixH){softEndY   = matrixH-1}
         for(var i=softStartX; i<=softEndX; i++){
             for(var j=softStartY; j<=softEndY; j++){
-                if(matrix[i][j] != this.superposition){
-                    matrix[i][j] = this.brushSoftness.superposition
-                    setSemiPaintedCoords(new Coord(i, j))
-                }
+                matrix[i][j] |= this.superposition
+                setSemiPaintedCoords(new Coord(i, j))
             }
         }
 
@@ -58,12 +56,6 @@ class Brush{
 
 
 
-    }
-}
-class BrushSoftness{
-    constructor(superposition, width){
-        this.superposition= superposition
-        this.width        = width
     }
 }
 
