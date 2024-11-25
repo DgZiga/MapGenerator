@@ -2,16 +2,16 @@
 Repo started out as implementation of [WFC (Wave Function Collapse) algorithm](https://github.com/mxgmn/WaveFunctionCollapse) aimed at producing pokémon maps. 
 The scope has extended to being able to create playable random maps using WFC on a GBA game. 
 
-Currently a custom tileset down-sampled from Pokémon Odyssey is loaded in, a simple algorithm finds a walkable path from one edge of the map to the other and wfc fills in the gaps
+Currently a custom tileset sampled from [Kyledove's public resources](https://www.deviantart.com/kyle-dove/art/Biome-Tiles-Public-274422390) is loaded in. During runtime, a custom algorithm creates random shapes in a vectorial space; those shapes are then rasterized to a wfc input map. Finally, wfc runs on the input map and creates a coherent, navigable map.
 
 
 ## Internal workings
 This repository contains a set of [tools](#tools) hinging on the implementation of two algorithms: [Wave Function Collapse](#wave-function-collapse), and [Walkable Algorithm](#walkable-algorithm)
 
 ### Wave Function Collapse
-Explaining how WFC works is not in this document scope, I'm going to anthropomorphize concepts for readability. Please refer to the [original repo](https://github.com/mxgmn/WaveFunctionCollapse) for a proper explanation. 
+Explaining how WFC works is not in this document scope, I'm going to simplify concepts for readability. Please refer to the [original repo](https://github.com/mxgmn/WaveFunctionCollapse) for a proper explanation. 
 
-In simplest terms, the algorithm (or at least this implementation of the algorithm) intializes an arbitrarily sized matrix of [superpositions](#superposition), it then recursively looks for the "lowest-entropy" superposition (the one with the fewer possibilities), "collapses" it (randomly picks a possible option), and re-computes all [superpositions](#superposition) in the matrix according to the collapse result and the [superposition rules](#superposition-rules) of the tileset.
+In simplest terms, the algorithm (or at least this implementation of the algorithm) intializes an arbitrarily sized matrix of [superpositions](#superposition), it then recursively looks for the "lowest-entropy" superposition (the one with the fewer possibilities), "collapses" it (randomly picks a possible option), and re-computes all [superpositions](#superposition) in the matrix according to the collapse result and the [superposition rules](#superposition-rules) of the loaded tileset.
 
 In this implementation, each tile is given an incremental id starting from 0 (tile id -1 is interpreted as a "missing tile").
 
@@ -38,7 +38,7 @@ For WFC to work, each tile must define four rules: one for each cardinal directi
 A rule is defined strict when it allows for a low number of tiles.  
 A common example would be multi-tiled structures, such as houses or tall trees in the base pokémon games: the tile of the tree trunk will only ever allow the tree top to be above it.
 
-Such strict rules considerably raise the risk of [contradictions](#contradictions) arising during WFC and must be planned for accordingly. More research is needed on how exactly to optimize a tileset for these rules.
+Such strict rules considerably raise the risk of [contradictions](#contradictions) arising during WFC and must be planned for accordingly. In the current implementation, this is handled by [brush softness](#brush-softness).
 
 #### Interaction with Superpositions and rules
 Superposition interactions with rules can be encoded as bitwise operations
@@ -94,7 +94,50 @@ This repo in particular:
 - Applies the mask to the starting superposition matrix of WFC 
 - WFC [supports constraints](https://github.com/mxgmn/WaveFunctionCollapse?tab=readme-ov-file#constrained-synthesis), thanks to that the mask ensures that the final map will have a walkable path.
 
-The "arbitrary algorithm" listed here is mainly what controls the final shape of the map. The current implementation is rushed, and the number one top priority of this repo going forward should be to improve this.
+The "arbitrary algorithm" listed here is mainly what controls the final shape of the map.  
+
+#### Current Implementation
+The current implementation provides a "vectorized" interface that allows to draw lines and ellipses; those shapes are then "rasterized" into the 2D mask.
+
+
+
+##### Vector interface
+The vector interface is made up of two classes: Vector and Ellipse, representing a line and an ellipse respectively.  
+Those objects work in a 2d, 1-100 coordinate system (e.g. an Ellipse with center 50,50 will always be in the middle of the grid) that is independent from the target wfc matrix resolution.
+After a path is composed with those basic geometric shapes, that path is then rasterized into the WFC input matrix.
+
+##### Rasterization
+Each basic geometric object (Vector and Ellipse for now) has to implement a `rasterize(matrix, brush)` function, where `matrix` is the input matrix of WFC (which is modified as a [side effect](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) of the function), and `brush` is an instance of the `Brush` class.
+
+The `Brush` class allows the user to specify:
+- The target superposition for cells that are marked as "walkable"
+- A width parameter. Wider brushes will cover more area in the final map
+    - The width value is expressed in the matrix coordinate system, and as such it is somewhat dependent on the matrix size (a brush of size 1 might work well for a 10x10 map, not so much for a 50x50 one). A decent average I was able to find for square maps is `ceil(matrix_width/20)`.
+- a softness parameter that will control [brush softness](#brush-softness). By default this is set to 0
+
+After the rasterization is complete
+
+###### Brush softness
+The rasterization algorithm defines two main superpositions: `NW`, a superposition that only allows non-walkable tiles, and `W`, a superposition that only allows walkable tiles.
+At first, the algorithm used to just set the whole matrix to `NW`, rasterize the vector objects onto the wfc matrix, and finally set the cells marked by the rasterization to `W`.
+
+A recurring problem that was found when testing the above algorithm is that sharp changes in allowed tiles across adjacent superpositions - such as going from `NW` to `W` - are a major cause of [contradictions](#contradictions).
+This is beacuse without any preventive measures, it is fairly likely that the algorithm might place a piece of a multi-tile structure (which requires multiple specific tiles in sepcific positions) in a place where adjacent rules do not allow the structure to fully form.
+
+To solve this problem, the implementation allows the user to specify an integer called "softness". When painting a specific region with a brush of softness `S`, the rasterization algorithm will also extend the paint region of `S` cells, and insted of setting the target cells directly to `W`, will instead use the `|=` operator to add `W` to the currently existing superposition. 
+In the existing implementation this means that the cells impacted by the softness parameter will effectively be `NW|W`. 
+Below is an example of the effects of a brush with width 1 and softness 1:
+```
+NW     NW    NW    NW   NW
+NW    NW|W  NW|W  NW|W  NW
+NW    NW|W   W    NW|W  NW
+NW    NW|W  NW|W  NW|W  NW
+NW     NW    NW    NW   NW
+```
+
+
+##### Pathfinding
+
 
 ### Tools
 The repo includes:
@@ -138,8 +181,12 @@ The app main screen is divided as such:
     - clicking on a tile will remove them from the whitelist
     - clicking the green "+" icon at the end of the list will enter the "add tile mode".
         - during the add tile mode, clicking on a tile from the list at the bottom right side of the page will add that tile to the rule.
+            - by default, this change is mirrored: adding tile X to the left whitelist of tile Y will also add tile Y to the right whitelist of X.
         - you can exit the mode by pressing Enter
-- on the upper right corner the app displays the control panel. For now it just contains a "Print" button that prints the rules to the js console as [JSON objects](#serialize-superpositions-as-bitmaps). 
+- on the upper right corner the app displays the control panel, it contains 3 buttons:
+    - Print: prints the rules to the js console as [JSON objects](#serialize-superpositions-as-bitmaps). 
+    - New Probabilty for Tile: the user is prompted for a tileId, the given tileId is then appended to the ruleset.
+    - Copy Probabilities: the user is prompted for two tile ids: the rules of the first one are then copied onto the second one 
 
 
 #### Implementation
